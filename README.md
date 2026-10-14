@@ -8,6 +8,19 @@
 - **資料集來源**：[Kaggle - Human-AI Interaction Dataset](https://www.kaggle.com/datasets/ahmedashrafpro/human-ai-interaction)
 - **實體資料檔案**：`Human-AI Interaction.csv`（Kaggle 官方競賽正式資料集，10,100 筆樣本）
 - **程式碼儲存庫**：[https://github.com/naz0914/test](https://github.com/naz0914/test)
+- **🌐 互動式 Web 線上體驗 (GitHub Pages)**：[https://naz0914.github.io/test/](https://naz0914.github.io/test/)（StatsUnlock 風格即時迴歸推論計算機）
+
+---
+
+### 🌐 專屬互動式多元迴歸計算機 (Interactive Web Calculator)
+本專案已實作兼具現代統計 SaaS 質感的互動網頁（參照 [StatsUnlock](https://statsunlock.com/multiple-linear-regression-calculator/) 視覺風格設計）：
+* **即時雙向聯動**：12 個關鍵特徵滑桿與數值框即時連動，微秒級計算 Z-Score 與標準化推估。
+* **95% 統計信賴區間**：動態計算信任分數估計區間 ($[\hat{y} \pm 1.96 \times SE]$)。
+* **三大授權分級 (Automation Tiers)**：自動依據預測分數動態判斷全自動化／人機雙審協同／保守防護等級。
+* **Chart.js 動態視覺化**：內建標準化係數正負瀑布圖與信賴區間邊際效應預測曲線。
+* **完整 ANOVA 與迴歸表**：展示 $F=1489.71$ ($p < 0.0001$)、各變數 $t$-統計量與顯著性星號。
+* **線上操作網址**：[https://naz0914.github.io/test/](https://naz0914.github.io/test/)
+
 
 ---
 
@@ -33,6 +46,9 @@
 ├── 7114068027_hw2_report.pdf     # [主要繳交] 完整排版之作業報告書 PDF (共 4 頁，含首頁、圖表、摘要)
 ├── GPT_Dialogue.pdf              # [主要繳交] 完整 AI 對話紀錄 PDF
 ├── 7114068027_hw2.zip            # [主要繳交] 依規定打包以上三項檔案之壓縮檔
+├── index.html                    # [亮點展示] StatsUnlock 風格互動式多元迴歸計算機 (GitHub Pages 部署)
+├── .github/workflows/
+│   └── deploy-pages.yml          # 自動發布至 GitHub Pages 之 CI/CD 工作流程
 ├── Human-AI Interaction.csv      # Kaggle 官方原始資料集 (10,100 筆樣本、21 欄位)
 ├── prediction_ci_plot.png        # 高解析度預測散佈圖 (含 95% 信賴區間帶)
 ├── feature_importance.png        # RFE 精選 12 特徵之標準化迴歸權重條形圖

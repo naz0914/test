@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Human-AI 信任度多元線性回歸計算機 | 7114068027 陳沐德</title>
+  <meta name="description" content="基於 Kaggle Human-AI Interaction 真實資料集 (N=9,899) 之多元線性回歸互動計算機與模型診斷儀表板，支援 12 項 RFE 核心特徵即時推論、95% 信賴區間預測與 ANOVA 統計分析。">
+  
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --border-color: #e2e8f0;
+      --border-focus: #6366f1;
+      
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #e0e7ff;
+      --primary-dark: #3730a3;
+      
+      --success: #10b981;
+      --success-light: #d1fae5;
+      --success-dark: #065f46;
+      
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
+      
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --danger-dark: #991b1b;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 60px;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header & Navigation */
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      background-color: rgba(255, 255, 255, 0.95);
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+      color: white;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+    }
+
+    .logo-text h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-text p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .badge-student {
+      background-color: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      text-decoration: none;
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-subtle);
+      border-color: #cbd5e1;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+    }
+
+    /* KPI Hero Metrics Strip */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 24px 0 28px 0;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #cbd5e1;
+    }
+
+    .kpi-card.highlight::before {
+      background: linear-gradient(90deg, #4f46e5, #3b82f6);
+    }
+
+    .kpi-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .kpi-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+      margin: 8px 0;
+      letter-spacing: -0.02em;
+    }
+
+    .kpi-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .kpi-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .tag-success {
+      background: var(--success-light);
+      color: var(--success-dark);
+    }
+
+    .tag-indigo {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    /* Main 2-Column Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-header-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Scenario Presets */
+    .presets-container {
+      margin-bottom: 20px;
+    }
+
+    .presets-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .presets-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preset-chip {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .preset-chip:hover {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+    }
+
+    .preset-chip.active {
+      background: #e0e7ff;
+      border-color: #818cf8;
+      color: #3730a3;
+    }
+
+    /* Sliders & Features Group */
+    .feature-group {
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      background: #fafbfc;
+    }
+
+    .feature-group-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feature-item {
+      margin-bottom: 16px;
+    }
+
+    .feature-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .feature-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .feature-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feature-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .feature-value-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .num-input {
+      width: 68px;
+      padding: 4px 8px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: right;
+      color: var(--text-main);
+      background: #ffffff;
+      transition: border-color 0.15s;
+    }
+
+    .num-input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+    }
+
+    .impact-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      min-width: 58px;
+      text-align: right;
+    }
+
+    .impact-pos {
+      background: var(--success-light);
+      color: var(--success-dark);
+    }
+
+    .impact-neg {
+      background: var(--danger-light);
+      color: var(--danger-dark);
+    }
+
+    .impact-zero {
+      background: #f1f5f9;
+      color: var(--text-muted);
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .custom-range {
+      flex: 1;
+      height: 6px;
+      border-radius: 4px;
+      background: #e2e8f0;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    .custom-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      border: 2px solid #ffffff;
+      transition: transform 0.1s, background-color 0.1s;
+    }
+
+    .custom-range::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: var(--primary-hover);
+    }
+
+    /* Right Column: Prediction Score Hero Card */
+    .prediction-hero-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+      border: 2px solid #e0e7ff;
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .prediction-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .score-display-wrapper {
+      margin: 16px 0 10px 0;
+      position: relative;
+      display: inline-block;
+    }
+
+    .score-number {
+      font-size: 4rem;
+      font-weight: 800;
+      line-height: 1;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+      letter-spacing: -0.04em;
+    }
+
+    .score-max {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text-subtle);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .ci-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    .ci-badge strong {
+      color: var(--primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tier-card {
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-top: 12px;
+      text-align: left;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .tier-high {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #065f46;
+    }
+
+    .tier-med {
+      background: #fffbeb;
+      border-color: #fde68a;
+      color: #92400e;
+    }
+
+    .tier-low {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .tier-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .tier-body h4 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .tier-body p {
+      font-size: 0.8rem;
+      opacity: 0.9;
+      line-height: 1.4;
+    }
+
+    /* Waterfall Breakdown Card */
+    .waterfall-card {
+      margin-bottom: 20px;
+    }
+
+    .waterfall-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .waterfall-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+    }
+
+    .waterfall-name {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .waterfall-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+
+    /* Equation Section */
+    .equation-card {
+      margin-bottom: 28px;
+      overflow-x: auto;
+    }
+
+    .equation-box {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 20px;
+      border-radius: var(--radius-md);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    .eq-var {
+      color: #93c5fd;
+      font-weight: 600;
+    }
+
+    .eq-coef {
+      color: #fbbf24;
+      font-weight: 600;
+    }
+
+    .eq-plugged {
+      color: #a7f3d0;
+      font-weight: 700;
+    }
+
+    /* Charts Section */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 340px;
+      width: 100%;
+    }
+
+    /* Statistical Tables (ANOVA & Coefficients) */
+    .table-card {
+      margin-bottom: 28px;
+    }
+
+    .tab-header {
+      display: flex;
+      gap: 12px;
+      border-bottom: 2px solid var(--border-color);
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: none;
+      background: none;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.15s;
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+    }
+
+    .tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+    }
+
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+
+    .stats-table th {
+      background: #f8fafc;
+      padding: 10px 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+    }
+
+    .stats-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stats-table tr:hover {
+      background: #f8fafc;
+    }
+
+    .stats-table .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+
+    .sig-star {
+      color: #e11d48;
+      font-weight: 700;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-xl);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 30px 0;
+      margin-top: 40px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      text-align: center;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .header-inner {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Top Header -->
+  <header>
+    <div class="container header-inner">
+      <div class="logo-area">
+        <div class="logo-icon">Σ</div>
+        <div class="logo-text">
+          <h1>
+            Human-AI 信任度多元線性回歸計算機
+            <span class="badge-student">7114068027 陳沐德</span>
+          </h1>
+          <p>基於 Kaggle Real Dataset (N=9,899) • RFE 12 關鍵特徵篩選模型</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="btn-copy-report" title="複製當前預測診斷結果">
+          📋 複製報告
+        </button>
+        <button class="btn btn-secondary" id="btn-reset-defaults" title="恢復中位數預設值">
+          🔄 重設預設
+        </button>
+        <a href="https://github.com/naz0914/test" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+          ⭐ GitHub 專案庫
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <!-- KPI Model Evaluation Cards Strip -->
+    <section class="kpi-grid" aria-label="模型核心指標">
+      <div class="kpi-card highlight">
+        <div class="kpi-title">
+          <span>R² Score (決定係數)</span>
+          <span class="kpi-tag tag-indigo">解釋力優異</span>
+        </div>
+        <div class="kpi-value">0.6816</div>
+        <div class="kpi-desc">模型成功解釋近 <strong>68.2%</strong> 的信任度變異量</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">
+          <span>Adjusted R² (校正決定係數)</span>
+          <span class="kpi-tag tag-success">特徵無冗餘</span>
+        </div>
+        <div class="kpi-value">0.6812</div>
+        <div class="kpi-desc">考量 12 個特徵自由度懲罰後仍極為強健</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">
+          <span>RMSE (均方根誤差)</span>
+          <span class="kpi-tag tag-indigo">滿分 100 分</span>
+        </div>
+        <div class="kpi-value">5.1838</div>
+        <div class="kpi-desc">平均預測標準偏差僅約 <strong>±5.18 分</strong> (MAE: 4.15)</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">
+          <span>F-Statistic (顯著性檢定)</span>
+          <span class="kpi-tag tag-success">p &lt; 0.0001***</span>
+        </div>
+        <div class="kpi-value">1,489.7</div>
+        <div class="kpi-desc">整體多元迴歸模型具備極高統計顯著度</div>
+      </div>
+    </section>
+
+    <!-- Main Interactive Calculator Grid -->
+    <div class="dashboard-grid">
+      
+      <!-- Left Column: Interactive Inputs -->
+      <section class="card" aria-label="特徵參數輸入面板">
+        <div class="card-header">
+          <div>
+            <h2>🎛️ 特徵參數調節面板 (Predictor Inputs)</h2>
+            <div class="card-header-desc">拖動滑桿或直接輸入數值，即時動態計算 Z-Score 與信任分數貢獻度</div>
+          </div>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets-container">
+          <div class="presets-label">快速情境載入 (Quick Presets)</div>
+          <div class="presets-buttons">
+            <button class="preset-chip" data-preset="virtual_user">
+              🧑‍💻 HW2 模擬用戶 (93.10 分)
+            </button>
+            <button class="preset-chip" data-preset="optimal">
+              🌟 最適高信任情境 (Optimal)
+            </button>
+            <button class="preset-chip active" data-preset="median">
+              ⚖️ 典型基準中位數 (Baseline)
+            </button>
+            <button class="preset-chip" data-preset="crisis">
+              ⚠️ 認知負載崩潰 (High Risk)
+            </button>
+          </div>
+        </div>
+
+        <form id="calculator-form" onsubmit="return false;">
+          
+          <!-- Category 1: AI System Factors -->
+          <div class="feature-group">
+            <div class="feature-group-title">
+              <span>🤖 AI 系統核心特徵 (System Factors)</span>
+            </div>
+
+            <!-- trust_history -->
+            <div class="feature-item" data-feature="trust_history">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  累積信任歷史 (Trust History)
+                  <span class="feature-meta">權重: +4.2505</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-trust_history">+0.00</span>
+                  <input type="number" id="num-trust_history" class="num-input" min="0" max="1" step="0.01">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-trust_history" class="custom-range" min="0" max="1" step="0.01">
+              </div>
+            </div>
+
+            <!-- feedback_quality -->
+            <div class="feature-item" data-feature="feedback_quality">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  系統反饋品質 (Feedback Quality)
+                  <span class="feature-meta">權重: +2.8357</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-feedback_quality">+0.00</span>
+                  <input type="number" id="num-feedback_quality" class="num-input" min="0" max="1" step="0.01">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-feedback_quality" class="custom-range" min="0" max="1" step="0.01">
+              </div>
+            </div>
+
+            <!-- model_accuracy -->
+            <div class="feature-item" data-feature="model_accuracy">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  模型客觀準確率 (Model Accuracy)
+                  <span class="feature-meta">權重: +1.5372</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-model_accuracy">+0.00</span>
+                  <input type="number" id="num-model_accuracy" class="num-input" min="0.5" max="1.0" step="0.01">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-model_accuracy" class="custom-range" min="0.5" max="1.0" step="0.01">
+              </div>
+            </div>
+
+            <!-- ui_complexity -->
+            <div class="feature-item" data-feature="ui_complexity">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  介面複雜繁瑣度 (UI Complexity)
+                  <span class="feature-meta">權重: -3.4055 (第一阻力)</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-ui_complexity">-0.00</span>
+                  <input type="number" id="num-ui_complexity" class="num-input" min="1" max="3" step="1">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-ui_complexity" class="custom-range" min="1" max="3" step="1">
+              </div>
+            </div>
+
+            <!-- bias_level -->
+            <div class="feature-item" data-feature="bias_level">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  演算法偏見偏誤度 (Bias Level)
+                  <span class="feature-meta">權重: -2.8869 (第二阻力)</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-bias_level">-0.00</span>
+                  <input type="number" id="num-bias_level" class="num-input" min="0" max="1" step="0.01">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-bias_level" class="custom-range" min="0" max="1" step="0.01">
+              </div>
+            </div>
+
+            <!-- error_rate -->
+            <div class="feature-item" data-feature="error_rate">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  系統運作錯誤率 (Error Rate)
+                  <span class="feature-meta">權重: -1.3505</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-error_rate">-0.00</span>
+                  <input type="number" id="num-error_rate" class="num-input" min="0" max="0.55" step="0.01">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-error_rate" class="custom-range" min="0" max="0.55" step="0.01">
+              </div>
+            </div>
+          </div>
+
+          <!-- Category 2: User & Context Factors -->
+          <div class="feature-group">
+            <div class="feature-group-title">
+              <span>👤 使用者與操作情境特徵 (User & Context Factors)</span>
+            </div>
+
+            <!-- cognitive_load -->
+            <div class="feature-item" data-feature="cognitive_load">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  操作心理認知負荷 (Cognitive Load)
+                  <span class="feature-meta">權重: -1.4625</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-cognitive_load">-0.00</span>
+                  <input type="number" id="num-cognitive_load" class="num-input" min="0" max="1" step="0.01">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-cognitive_load" class="custom-range" min="0" max="1" step="0.01">
+              </div>
+            </div>
+
+            <!-- technical_experience -->
+            <div class="feature-item" data-feature="technical_experience">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  專業技術資歷年數 (Technical Exp.)
+                  <span class="feature-meta">權重: -0.0622</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-technical_experience">-0.00</span>
+                  <input type="number" id="num-technical_experience" class="num-input" min="0" max="20" step="0.5">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-technical_experience" class="custom-range" min="0" max="20" step="0.5">
+              </div>
+            </div>
+
+            <!-- prior_ai_exposure -->
+            <div class="feature-item" data-feature="prior_ai_exposure">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  過去 AI 接觸程度 (Prior AI Exposure)
+                  <span class="feature-meta">權重: +0.0821 (1:低 ~ 3:高)</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-prior_ai_exposure">+0.00</span>
+                  <input type="number" id="num-prior_ai_exposure" class="num-input" min="1" max="3" step="1">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-prior_ai_exposure" class="custom-range" min="1" max="3" step="1">
+              </div>
+            </div>
+
+            <!-- education_level -->
+            <div class="feature-item" data-feature="education_level">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  學歷教育程度 (Education Level)
+                  <span class="feature-meta">權重: +0.0844 (1:高中 ~ 4:博士)</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-education_level">+0.00</span>
+                  <input type="number" id="num-education_level" class="num-input" min="1" max="4" step="1">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-education_level" class="custom-range" min="1" max="4" step="1">
+              </div>
+            </div>
+
+            <!-- override_frequency -->
+            <div class="feature-item" data-feature="override_frequency">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  人工覆核介入次數 (Override Freq.)
+                  <span class="feature-meta">權重: +0.1191 (次/週)</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-override_frequency">+0.00</span>
+                  <input type="number" id="num-override_frequency" class="num-input" min="0" max="19" step="1">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-override_frequency" class="custom-range" min="0" max="19" step="1">
+              </div>
+            </div>
+
+            <!-- domain -->
+            <div class="feature-item" data-feature="domain">
+              <div class="feature-top-row">
+                <span class="feature-name">
+                  產業應用領域 (Domain Category)
+                  <span class="feature-meta">權重: +0.1238 (1:醫療 ~ 5:一般)</span>
+                </span>
+                <div class="feature-value-badge">
+                  <span class="impact-badge" id="badge-domain">+0.00</span>
+                  <input type="number" id="num-domain" class="num-input" min="1" max="5" step="1">
+                </div>
+              </div>
+              <div class="slider-row">
+                <input type="range" id="range-domain" class="custom-range" min="1" max="5" step="1">
+              </div>
+            </div>
+
+          </div>
+        </form>
+      </section>
+
+      <!-- Right Column: Real-time Live Prediction & Confidence Gauge -->
+      <section>
+        
+        <!-- Hero Prediction Score Card -->
+        <div class="prediction-hero-card" id="prediction-card">
+          <div class="prediction-title">預測信任分數 (Predicted Latent Trust Score)</div>
+          
+          <div class="score-display-wrapper">
+            <span class="score-number" id="score-val">70.50</span>
+            <span class="score-max">/ 100</span>
+          </div>
+
+          <div>
+            <div class="ci-badge">
+              <span>95% 統計信賴區間 (95% CI):</span>
+              <strong id="ci-range">[60.34 ~ 80.66]</strong>
+            </div>
+          </div>
+
+          <!-- Dynamic Automation Tier Box -->
+          <div class="tier-card tier-med" id="tier-box">
+            <div class="tier-icon" id="tier-icon">🟡</div>
+            <div class="tier-body">
+              <h4 id="tier-title">Tier 2: 人機雙審協同 (Collaborative AI)</h4>
+              <p id="tier-desc">信任分數介於 50 ~ 74 分，系統具備基本信任。建議開啟多步驟可解釋性 (XAI) 說明與關鍵二次確認。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Feature Contribution Waterfall -->
+        <div class="card waterfall-card">
+          <div class="card-header">
+            <div>
+              <h2>🌊 特徵貢獻度拆解 (Contribution Waterfall)</h2>
+              <div class="card-header-desc">基準截距與主要推升 / 抑制因子分析</div>
+            </div>
+          </div>
+          
+          <div class="waterfall-list">
+            <div class="waterfall-row">
+              <span class="waterfall-name">📍 模型基準截距 (β₀ Intercept)</span>
+              <span class="waterfall-val" style="color: var(--primary);">+70.50</span>
+            </div>
+            <div class="waterfall-row">
+              <span class="waterfall-name">🚀 最大正向推升因子</span>
+              <span class="waterfall-val" id="wf-top-pos" style="color: var(--success);">-</span>
+            </div>
+            <div class="waterfall-row">
+              <span class="waterfall-name">🔻 最大負向阻力因子</span>
+              <span class="waterfall-val" id="wf-top-neg" style="color: var(--danger);">-</span>
+            </div>
+            <div class="waterfall-row" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+              <span class="waterfall-name">🎯 最終累積預測分數 (Ŷ)</span>
+              <span class="waterfall-val" id="wf-final-score" style="color: #15803d; font-size: 0.95rem;">70.50</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scenario Quick Export & Actions -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>💾 診斷情境分享與匯出</h2>
+              <div class="card-header-desc">儲存目前的情境配置供報告撰寫引用</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-secondary" id="btn-export-csv" style="flex: 1;">
+              📥 匯出情境 CSV
+            </button>
+            <button class="btn btn-secondary" id="btn-print-pdf" style="flex: 1;">
+              🖨️ 列印 / 存為 PDF
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- Mathematical Equation Section (StatsUnlock Dynamic Plugging) -->
+    <section class="card equation-card" aria-label="迴歸方程式">
+      <div class="card-header">
+        <div>
+          <h2>📐 即時多元線性迴歸方程式 (Estimated Multiple Linear Regression Equation)</h2>
+          <div class="card-header-desc">黃色為標準化迴歸係數 (β)，綠色為當前輸入所對應之標準化特徵值 (Z-Score)</div>
+        </div>
+      </div>
+      <div class="equation-box" id="live-equation">
+        <!-- Dynamically injected via JS -->
+      </div>
+    </section>
+
+    <!-- Interactive Charts Section -->
+    <section class="charts-grid" aria-label="互動圖表">
+      
+      <!-- Chart 1: Feature Importance -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>📊 RFE 12 特徵標準化係數 (Beta Weights)</h2>
+            <div class="card-header-desc">綠色為正向推升，紅色為負向抑制（橫軸為標準化權重）</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="chart-coefficients"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 2: 95% Confidence Interval Marginal Curve -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>📈 95% 信賴區間邊際預測曲線</h2>
+            <div class="card-header-desc">以「累積信任歷史」為基底，淺藍陰影為 95% CI 區間帶</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="chart-ci"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ANOVA and Regression Coefficients Tables -->
+    <section class="card table-card" aria-label="統計檢定表">
+      <div class="tab-header">
+        <button class="tab-btn active" data-tab="tab-coefs">📋 迴歸係數檢定明細表 (Coefficients Table)</button>
+        <button class="tab-btn" data-tab="tab-anova">📊 ANOVA 變異數分析表 (ANOVA Summary)</button>
+      </div>
+
+      <!-- Coefficients Tab -->
+      <div id="tab-coefs" class="tab-content">
+        <div style="overflow-x: auto;">
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>特徵變數名稱 (Predictor)</th>
+                <th>平均值 (Mean)</th>
+                <th>標準差 (Std)</th>
+                <th>標準化係數 (Std β)</th>
+                <th>標準誤 (Std. Error)</th>
+                <th>t 統計量 (t-Stat)</th>
+                <th>p-Value</th>
+                <th>顯著性</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>截距項 (β₀ Intercept)</strong></td>
+                <td class="mono">-</td>
+                <td class="mono">-</td>
+                <td class="mono"><strong>70.4979</strong></td>
+                <td class="mono">0.0566</td>
+                <td class="mono">1244.96</td>
+                <td class="mono">&lt; 0.0001</td>
+                <td class="sig-star">***</td>
+              </tr>
+              <tr>
+                <td>累積信任歷史 (trust_history)</td>
+                <td class="mono">0.4982</td>
+                <td class="mono">0.2849</td>
+                <td class="mono" style="color: #059669; font-weight:700;">+4.2505</td>
+                <td class="mono">0.0567</td>
+                <td class="mono">74.98</td>
+                <td class="mono">&lt; 0.0001</td>
+                <td class="sig-star">***</td>
+              </tr>
+              <tr>
+                <td>系統反饋品質 (feedback_quality)</td>
+                <td class="mono">0.4980</td>
+                <td class="mono">0.2854</td>
+                <td class="mono" style="color: #059669; font-weight:700;">+2.8357</td>
+                <td class="mono">0.0567</td>
+                <td class="mono">50.03</td>
+                <td class="mono">&lt; 0.0001</td>
+                <td class="sig-star">***</td>
+              </tr>
+              <tr>
+                <td>模型客觀準確率 (model_accuracy)</td>
+                <td class="mono">0.7497</td>
+                <td class="mono">0.1424</td>
+                <td class="mono" style="color: #059669; font-weight:700;">+1.5372</td>
+                <td class="mono">0.2298</td>
+                <td class="mono">6.68</td>
+                <td class="mono">&lt; 0.0001</td>
+                <td class="sig-star">***</td>
+              </tr>
+              <tr>
+                <td>產業應用領域 (domain)</td>
+                <td class="mono">2.9353</td>
+                <td class="mono">1.4622</td>
+                <td class="mono">+0.1238</td>
+                <td class="mono">0.0567</td>
+                <td class="mono">2.32</td>
+                <td class="mono">0.0203</td>
+                <td class="sig-star">*</td>
+              </tr>
+              <tr>
+                <td>人工覆核介入次數 (override_frequency)</td>
+                <td class="mono">9.5131</td>
+                <td class="mono">5.7454</td>
+                <td class="mono">+0.1191</td>
+                <td class="mono">0.0567</td>
+                <td class="mono">2.10</td>
+                <td class="mono">0.0354</td>
+                <td class="sig-star">*</td>
+              </tr>
+              <tr>
+                <td>學歷教育程度 (education_level)</td>
+                <td class="mono">2.1032</td>
+                <td class="mono">0.9263</td>
+                <td class="mono">+0.0844</td>
+                <td class="mono">0.0566</td>
+                <td class="mono">1.50</td>
+                <td class="mono">0.1324</td>
+                <td>ns</td>
+              </tr>
+              <tr>
+                <td>過去 AI 接觸程度 (prior_ai_exposure)</td>
+                <td class="mono">1.8046</td>
+                <td class="mono">0.7421</td>
+                <td class="mono">+0.0821</td>
+                <td class="mono">0.0567</td>
+                <td class="mono">1.45</td>
+                <td class="mono">0.1471</td>
+                <td>ns</td>
+              </tr>
+              <tr>
+                <td>專業技術資歷年數 (technical_experience)</td>
+                <td class="mono">10.0482</td>
+                <td class="mono">5.9937</td>
+                <td class="mono">-0.0622</td>
+                <td class="mono">0.0567</td>
+                <td class="mono">-1.09</td>
+                <td class="mono">0.2744</td>
+                <td>ns</td>
+              </tr>
+              <tr>
+                <td>系統運作錯誤率 (error_rate)</td>
+                <td class="mono">0.2500</td>
+                <td class="mono">0.1439</td>
+                <td class="mono" style="color: #dc2626; font-weight:700;">-1.3505</td>
+                <td class="mono">0.2299</td>
+                <td class="mono">-5.88</td>
+                <td class="mono">&lt; 0.0001</td>
+                <td class="sig-star">***</td>
+              </tr>
+              <tr>
+                <td>操作心理認知負荷 (cognitive_load)</td>
+                <td class="mono">0.4924</td>
+                <td class="mono">0.2833</td>
+                <td class="mono" style="color: #dc2626; font-weight:700;">-1.4625</td>
+                <td class="mono">0.0567</td>
+                <td class="mono">-25.82</td>
+                <td class="mono">&lt; 0.0001</td>
+                <td class="sig-star">***</td>
+              </tr>
+              <tr>
+                <td>演算法偏見偏誤度 (bias_level)</td>
+                <td class="mono">0.5030</td>
+                <td class="mono">0.2832</td>
+                <td class="mono" style="color: #dc2626; font-weight:700;">-2.8869</td>
+                <td class="mono">0.0567</td>
+                <td class="mono">-50.95</td>
+                <td class="mono">&lt; 0.0001</td>
+                <td class="sig-star">***</td>
+              </tr>
+              <tr>
+                <td>介面複雜繁瑣度 (ui_complexity)</td>
+                <td class="mono">1.9116</td>
+                <td class="mono">0.6911</td>
+                <td class="mono" style="color: #dc2626; font-weight:700;">-3.4055</td>
+                <td class="mono">0.0567</td>
+                <td class="mono">-60.01</td>
+                <td class="mono">&lt; 0.0001</td>
+                <td class="sig-star">***</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ANOVA Tab -->
+      <div id="tab-anova" class="tab-content" style="display: none;">
+        <div style="overflow-x: auto;">
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>變異來源 (Source of Variation)</th>
+                <th>自由度 (df)</th>
+                <th>平方和 (Sum of Squares, SS)</th>
+                <th>均方和 (Mean Square, MS)</th>
+                <th>F 檢定統計量 (F-Value)</th>
+                <th>顯著性機率 (p-Value)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>回歸模型變異 (Regression / Model)</strong></td>
+                <td class="mono">12</td>
+                <td class="mono">453,933.07</td>
+                <td class="mono">37,827.76</td>
+                <td class="mono"><strong>1,489.71</strong></td>
+                <td class="mono">&lt; 0.0001***</td>
+              </tr>
+              <tr>
+                <td><strong>殘差誤差變異 (Residuals / Error)</strong></td>
+                <td class="mono">7,906</td>
+                <td class="mono">200,754.43</td>
+                <td class="mono">25.39</td>
+                <td class="mono">-</td>
+                <td class="mono">-</td>
+              </tr>
+              <tr style="background: #f8fafc; font-weight: 700;">
+                <td><strong>總變異量 (Total Variation)</strong></td>
+                <td class="mono">7,918</td>
+                <td class="mono">654,687.50</td>
+                <td class="mono">-</td>
+                <td class="mono">-</td>
+                <td class="mono">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <span id="toast-icon">✅</span>
+    <span id="toast-msg">已成功複製情境報告至剪貼簿！</span>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>
+        <strong>商業數據分析 HW2 期中作業專題</strong> • 學生：<strong>陳沐德</strong> (學號：<code>7114068027</code>)
+      </p>
+      <p style="margin-top: 6px;">
+        資料集：Kaggle <a href="https://www.kaggle.com/datasets" target="_blank" rel="noopener">Human-AI Interaction</a> (N=9,899 Cleaned) • 遵循 CRISP-DM 研發標準
+      </p>
+    </div>
+  </footer>
+
+  <!-- Application Logic JavaScript -->
+  <script>
+    // Exact Trained Statistical Model Artifacts
+    const MODEL_DATA = {
+      intercept: 70.4979,
+      rmse: 5.1838,
+      r2: 0.6816,
+      adj_r2: 0.6812,
+      f_stat: 1489.71,
+      features: {
+        trust_history: {
+          name: "累積信任歷史 (Trust History)",
+          beta: 4.2505,
+          mean: 0.4982,
+          std: 0.2849,
+          min: 0,
+          max: 1,
+          step: 0.01,
+          default: 0.50
+        },
+        feedback_quality: {
+          name: "系統反饋品質 (Feedback Quality)",
+          beta: 2.8357,
+          mean: 0.4980,
+          std: 0.2854,
+          min: 0,
+          max: 1,
+          step: 0.01,
+          default: 0.50
+        },
+        model_accuracy: {
+          name: "模型客觀準確率 (Model Accuracy)",
+          beta: 1.5372,
+          mean: 0.7497,
+          std: 0.1424,
+          min: 0.50,
+          max: 1.00,
+          step: 0.01,
+          default: 0.75
+        },
+        domain: {
+          name: "產業應用領域 (Domain)",
+          beta: 0.1238,
+          mean: 2.9353,
+          std: 1.4622,
+          min: 1,
+          max: 5,
+          step: 1,
+          default: 3
+        },
+        override_frequency: {
+          name: "人工覆核頻率 (Override Freq)",
+          beta: 0.1191,
+          mean: 9.5131,
+          std: 5.7454,
+          min: 0,
+          max: 19,
+          step: 1,
+          default: 9
+        },
+        education_level: {
+          name: "學歷教育程度 (Education Level)",
+          beta: 0.0844,
+          mean: 2.1032,
+          std: 0.9263,
+          min: 1,
+          max: 4,
+          step: 1,
+          default: 2
+        },
+        prior_ai_exposure: {
+          name: "過去 AI 接觸度 (Prior AI Exposure)",
+          beta: 0.0821,
+          mean: 1.8046,
+          std: 0.7421,
+          min: 1,
+          max: 3,
+          step: 1,
+          default: 2
+        },
+        technical_experience: {
+          name: "專業技術資歷 (Technical Exp)",
+          beta: -0.0622,
+          mean: 10.0482,
+          std: 5.9937,
+          min: 0,
+          max: 20,
+          step: 0.5,
+          default: 10.0
+        },
+        error_rate: {
+          name: "系統運作錯誤率 (Error Rate)",
+          beta: -1.3505,
+          mean: 0.2500,
+          std: 0.1439,
+          min: 0,
+          max: 0.55,
+          step: 0.01,
+          default: 0.25
+        },
+        cognitive_load: {
+          name: "操作心理認知負荷 (Cognitive Load)",
+          beta: -1.4625,
+          mean: 0.4924,
+          std: 0.2833,
+          min: 0,
+          max: 1,
+          step: 0.01,
+          default: 0.50
+        },
+        bias_level: {
+          name: "演算法偏見偏誤度 (Bias Level)",
+          beta: -2.8869,
+          mean: 0.5030,
+          std: 0.2832,
+          min: 0,
+          max: 1,
+          step: 0.01,
+          default: 0.50
+        },
+        ui_complexity: {
+          name: "介面複雜繁瑣度 (UI Complexity)",
+          beta: -3.4055,
+          mean: 1.9116,
+          std: 0.6911,
+          min: 1,
+          max: 3,
+          step: 1,
+          default: 2
+        }
+      }
+    };
+
+    // Preset configurations
+    const PRESETS = {
+      median: {
+        trust_history: 0.50,
+        feedback_quality: 0.50,
+        model_accuracy: 0.75,
+        ui_complexity: 2,
+        bias_level: 0.50,
+        error_rate: 0.25,
+        cognitive_load: 0.50,
+        technical_experience: 10.0,
+        prior_ai_exposure: 2,
+        education_level: 2,
+        override_frequency: 9,
+        domain: 3
+      },
+      virtual_user: {
+        trust_history: 0.86,
+        feedback_quality: 0.91,
+        model_accuracy: 0.94,
+        ui_complexity: 1,
+        bias_level: 0.12,
+        error_rate: 0.05,
+        cognitive_load: 0.35,
+        technical_experience: 8.5,
+        prior_ai_exposure: 3,
+        education_level: 2,
+        override_frequency: 1,
+        domain: 3
+      },
+      optimal: {
+        trust_history: 0.98,
+        feedback_quality: 0.95,
+        model_accuracy: 0.99,
+        ui_complexity: 1,
+        bias_level: 0.02,
+        error_rate: 0.01,
+        cognitive_load: 0.15,
+        technical_experience: 12.0,
+        prior_ai_exposure: 3,
+        education_level: 3,
+        override_frequency: 2,
+        domain: 4
+      },
+      crisis: {
+        trust_history: 0.15,
+        feedback_quality: 0.20,
+        model_accuracy: 0.55,
+        ui_complexity: 3,
+        bias_level: 0.90,
+        error_rate: 0.48,
+        cognitive_load: 0.95,
+        technical_experience: 18.0,
+        prior_ai_exposure: 1,
+        education_level: 1,
+        override_frequency: 18,
+        domain: 1
+      }
+    };
+
+    // State
+    let currentValues = { ...PRESETS.median };
+    let coefChart = null;
+    let ciChart = null;
+
+    // Toast helper
+    function showToast(msg, icon = "✅") {
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toast-msg");
+      const toastIcon = document.getElementById("toast-icon");
+      toastMsg.textContent = msg;
+      toastIcon.textContent = icon;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    // Initialize Inputs and Event Listeners
+    function initInputs() {
+      Object.keys(MODEL_DATA.features).forEach(feat => {
+        const rangeEl = document.getElementById(`range-${feat}`);
+        const numEl = document.getElementById(`num-${feat}`);
+        
+        if (rangeEl && numEl) {
+          rangeEl.value = currentValues[feat];
+          numEl.value = currentValues[feat];
+
+          // Range slider input
+          rangeEl.addEventListener("input", (e) => {
+            const val = parseFloat(e.target.value);
+            numEl.value = val;
+            currentValues[feat] = val;
+            recalculate();
+          });
+
+          // Numeric input
+          numEl.addEventListener("input", (e) => {
+            let val = parseFloat(e.target.value);
+            if (isNaN(val)) return;
+            const meta = MODEL_DATA.features[feat];
+            if (val < meta.min) val = meta.min;
+            if (val > meta.max) val = meta.max;
+            rangeEl.value = val;
+            currentValues[feat] = val;
+            recalculate();
+          });
+        }
+      });
+
+      // Preset buttons
+      document.querySelectorAll(".preset-chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".preset-chip").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          const presetKey = btn.getAttribute("data-preset");
+          if (PRESETS[presetKey]) {
+            loadPreset(PRESETS[presetKey]);
+            showToast(`已載入「${btn.textContent.trim()}」情境參數！`, "⚡");
+          }
+        });
+      });
+
+      // Reset Defaults
+      document.getElementById("btn-reset-defaults").addEventListener("click", () => {
+        loadPreset(PRESETS.median);
+        document.querySelectorAll(".preset-chip").forEach(b => b.classList.remove("active"));
+        document.querySelector('[data-preset="median"]').classList.add("active");
+        showToast("已恢復為全特徵中位數預設值！", "🔄");
+      });
+
+      // Copy Report
+      document.getElementById("btn-copy-report").addEventListener("click", () => {
+        copyDiagnosticReport();
+      });
+
+      // Export CSV
+      document.getElementById("btn-export-csv").addEventListener("click", () => {
+        exportScenarioCSV();
+      });
+
+      // Print PDF
+      document.getElementById("btn-print-pdf").addEventListener("click", () => {
+        window.print();
+      });
+
+      // Tab switching
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+          document.querySelectorAll(".tab-content").forEach(c => c.style.display = "none");
+          btn.classList.add("active");
+          const target = btn.getAttribute("data-tab");
+          document.getElementById(target).style.display = "block";
+        });
+      });
+    }
+
+    function loadPreset(presetObj) {
+      currentValues = { ...presetObj };
+      Object.keys(currentValues).forEach(feat => {
+        const rangeEl = document.getElementById(`range-${feat}`);
+        const numEl = document.getElementById(`num-${feat}`);
+        if (rangeEl && numEl) {
+          rangeEl.value = currentValues[feat];
+          numEl.value = currentValues[feat];
+        }
+      });
+      recalculate();
+    }
+
+    // Core Calculation Logic
+    function recalculate() {
+      let predictedScore = MODEL_DATA.intercept;
+      const contributions = [];
+
+      Object.keys(MODEL_DATA.features).forEach(feat => {
+        const meta = MODEL_DATA.features[feat];
+        const rawVal = currentValues[feat];
+        // Calculate Z-Score
+        const zScore = (rawVal - meta.mean) / meta.std;
+        const delta = meta.beta * zScore;
+        predictedScore += delta;
+
+        contributions.push({
+          feat,
+          name: meta.name,
+          beta: meta.beta,
+          rawVal,
+          zScore,
+          delta
+        });
+
+        // Update single feature badge
+        const badgeEl = document.getElementById(`badge-${feat}`);
+        if (badgeEl) {
+          const sign = delta >= 0 ? "+" : "";
+          badgeEl.textContent = `${sign}${delta.toFixed(2)}`;
+          badgeEl.className = "impact-badge " + (delta > 0.05 ? "impact-pos" : (delta < -0.05 ? "impact-neg" : "impact-zero"));
+        }
+      });
+
+      // Bound score between 0 and 100
+      const boundedScore = Math.min(100, Math.max(0, predictedScore));
+
+      // 95% Confidence Interval Calculation
+      // Margin = 1.96 * RMSE (approximate prediction interval for individual response)
+      const ciHalf = 1.96 * (MODEL_DATA.rmse / Math.sqrt(1)); // conservative individual SE
+      const ciLower = Math.max(0, boundedScore - ciHalf);
+      const ciUpper = Math.min(100, boundedScore + ciHalf);
+
+      // Update UI elements
+      document.getElementById("score-val").textContent = boundedScore.toFixed(2);
+      document.getElementById("ci-range").textContent = `[${ciLower.toFixed(2)} ~ ${ciUpper.toFixed(2)}]`;
+      document.getElementById("wf-final-score").textContent = boundedScore.toFixed(2);
+
+      // Update Automation Tier
+      updateTier(boundedScore);
+
+      // Update Waterfall Highlights
+      updateWaterfall(contributions);
+
+      // Update Live Formula
+      updateLiveEquation(contributions, boundedScore);
+
+      // Update Marginal CI Curve Chart
+      updateCIChart(boundedScore);
+    }
+
+    function updateTier(score) {
+      const box = document.getElementById("tier-box");
+      const icon = document.getElementById("tier-icon");
+      const title = document.getElementById("tier-title");
+      const desc = document.getElementById("tier-desc");
+
+      box.className = "tier-card";
+      if (score >= 75) {
+        box.classList.add("tier-high");
+        icon.textContent = "🟢";
+        title.textContent = "Tier 1: 全自動化授權 (Full Autonomy)";
+        desc.textContent = `信任分數 ${score.toFixed(1)} 分 (≥ 75分)。使用者處於高度信任良性人機協作狀態，系統可解鎖快速協作授權，隱藏冗餘確認視窗，釋放最高生產力。`;
+      } else if (score >= 50) {
+        box.classList.add("tier-med");
+        icon.textContent = "🟡";
+        title.textContent = "Tier 2: 人機雙審協同 (Collaborative AI)";
+        desc.textContent = `信任分數 ${score.toFixed(1)} 分 (50~74分)。系統具備適度信任基礎。建議提供多步驟決策解釋 (XAI) 並在關鍵節點保留人工確認確認機制。`;
+      } else {
+        box.classList.add("tier-low");
+        icon.textContent = "🔴";
+        title.textContent = "Tier 3: 保守審查防護 (Safeguard Mode)";
+        desc.textContent = `信任分數 ${score.toFixed(1)} 分 (< 50分)。使用者處於低信任或過載防衛狀態。系統強制切換為保守輔助模式，所有關鍵動作必須由人工主導核准。`;
+      }
+    }
+
+    function updateWaterfall(contributions) {
+      // Find top positive and top negative
+      const sorted = [...contributions].sort((a, b) => b.delta - a.delta);
+      const topPos = sorted[0];
+      const topNeg = sorted[sorted.length - 1];
+
+      const posEl = document.getElementById("wf-top-pos");
+      const negEl = document.getElementById("wf-top-neg");
+
+      if (topPos.delta > 0) {
+        posEl.innerHTML = `${topPos.name.split(' ')[0]} (<strong>+${topPos.delta.toFixed(2)}</strong>)`;
+      } else {
+        posEl.textContent = "無明顯正向因子";
+      }
+
+      if (topNeg.delta < 0) {
+        negEl.innerHTML = `${topNeg.name.split(' ')[0]} (<strong>${topNeg.delta.toFixed(2)}</strong>)`;
+      } else {
+        negEl.textContent = "無明顯負向阻力";
+      }
+    }
+
+    function updateLiveEquation(contributions, finalScore) {
+      const eqEl = document.getElementById("live-equation");
+      
+      let html = `<div><strong>Ŷ (Predicted Trust)</strong> = <span class="eq-coef">${MODEL_DATA.intercept.toFixed(4)}</span> [β₀]</div>`;
+      
+      contributions.forEach(c => {
+        const sign = c.beta >= 0 ? "+" : "-";
+        const absBeta = Math.abs(c.beta).toFixed(4);
+        const zStr = (c.zScore >= 0 ? "+" : "") + c.zScore.toFixed(3);
+        const deltaStr = (c.delta >= 0 ? "+" : "") + c.delta.toFixed(2);
+        
+        html += `<div> &nbsp; ${sign} (<span class="eq-coef">${absBeta}</span> × <span class="eq-var">${c.feat}</span>[<span class="eq-plugged">${zStr}σ</span>]) &nbsp; <em>→ 貢獻: ${deltaStr}</em></div>`;
+      });
+
+      html += `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #475569;"><strong>= <span style="color: #38bdf8; font-size: 1.1rem;">${finalScore.toFixed(2)} / 100</span></strong></div>`;
+      eqEl.innerHTML = html;
+    }
+
+    // Build Chart.js Visualizations
+    function initCharts() {
+      // Chart 1: Feature Importance Bar Chart
+      const coefCanvas = document.getElementById("chart-coefficients");
+      const feats = Object.keys(MODEL_DATA.features);
+      const labels = feats.map(f => MODEL_DATA.features[f].name.split(" ")[0]);
+      const data = feats.map(f => MODEL_DATA.features[f].beta);
+      const bgColors = data.map(v => v >= 0 ? "rgba(16, 185, 129, 0.85)" : "rgba(239, 68, 68, 0.85)");
+      const borderColors = data.map(v => v >= 0 ? "#059669" : "#dc2626");
+
+      coefChart = new Chart(coefCanvas, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "標準化係數 (Standardized Beta)",
+            data: data,
+            backgroundColor: bgColors,
+            borderColor: borderColors,
+            borderWidth: 1.2,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  return ` 權重 Beta: ${ctx.raw > 0 ? "+" : ""}${ctx.raw.toFixed(4)}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: "#f1f5f9" },
+              ticks: { font: { family: "JetBrains Mono" } }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { family: "Plus Jakarta Sans", size: 11, weight: 600 } }
+            }
+          }
+        }
+      });
+
+      // Chart 2: Marginal CI Prediction Curve Chart
+      const ciCanvas = document.getElementById("chart-ci");
+      const steps = 15;
+      const xRange = [];
+      const predLine = [];
+      const upperCI = [];
+      const lowerCI = [];
+
+      for (let i = 0; i <= steps; i++) {
+        const th = i / steps; // 0 to 1
+        xRange.push(th.toFixed(2));
+      }
+
+      ciChart = new Chart(ciCanvas, {
+        type: "line",
+        data: {
+          labels: xRange,
+          datasets: [
+            {
+              label: "預測信任分數",
+              data: [],
+              borderColor: "#4f46e5",
+              backgroundColor: "rgba(79, 70, 229, 0.1)",
+              borderWidth: 2.5,
+              tension: 0.1,
+              pointRadius: 3,
+              pointBackgroundColor: "#4f46e5"
+            },
+            {
+              label: "95% 信賴區間上限",
+              data: [],
+              borderColor: "rgba(99, 102, 241, 0.25)",
+              borderDash: [4, 4],
+              borderWidth: 1.5,
+              fill: false,
+              pointRadius: 0
+            },
+            {
+              label: "95% 信賴區間下限",
+              data: [],
+              borderColor: "rgba(99, 102, 241, 0.25)",
+              borderDash: [4, 4],
+              borderWidth: 1.5,
+              fill: "-1",
+              backgroundColor: "rgba(99, 102, 241, 0.08)",
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: "top",
+              labels: { font: { family: "Plus Jakarta Sans", size: 11 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  return ` ${ctx.dataset.label}: ${parseFloat(ctx.raw).toFixed(2)}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "累積信任歷史 (Trust History, 0.00 ~ 1.00)",
+                font: { size: 11, weight: 600 }
+              },
+              grid: { color: "#f8fafc" }
+            },
+            y: {
+              min: 0,
+              max: 100,
+              title: {
+                display: true,
+                text: "預測信任分數 (0~100)",
+                font: { size: 11, weight: 600 }
+              },
+              ticks: { font: { family: "JetBrains Mono" } },
+              grid: { color: "#f1f5f9" }
+            }
+          }
+        }
+      });
+    }
+
+    function updateCIChart(currentFinalScore) {
+      if (!ciChart) return;
+
+      const steps = 15;
+      const predLine = [];
+      const upperCI = [];
+      const lowerCI = [];
+      const ciHalf = 1.96 * MODEL_DATA.rmse;
+
+      // Base contribution from all other 11 features
+      let baseWithoutTH = MODEL_DATA.intercept;
+      Object.keys(MODEL_DATA.features).forEach(feat => {
+        if (feat !== "trust_history") {
+          const meta = MODEL_DATA.features[feat];
+          const z = (currentValues[feat] - meta.mean) / meta.std;
+          baseWithoutTH += meta.beta * z;
+        }
+      });
+
+      const thMeta = MODEL_DATA.features["trust_history"];
+      for (let i = 0; i <= steps; i++) {
+        const testTH = i / steps;
+        const testZ = (testTH - thMeta.mean) / thMeta.std;
+        const testPred = Math.min(100, Math.max(0, baseWithoutTH + thMeta.beta * testZ));
+        predLine.push(testPred.toFixed(2));
+        upperCI.push(Math.min(100, testPred + ciHalf).toFixed(2));
+        lowerCI.push(Math.max(0, testPred - ciHalf).toFixed(2));
+      }
+
+      ciChart.data.datasets[0].data = predLine;
+      ciChart.data.datasets[1].data = upperCI;
+      ciChart.data.datasets[2].data = lowerCI;
+      ciChart.update("none");
+    }
+
+    // Export Scenario CSV
+    function exportScenarioCSV() {
+      let csv = "Feature,Raw_Value,Mean,Std,Z_Score,Beta_Weight,Impact_Delta\n";
+      csv += `Intercept,${MODEL_DATA.intercept},-, -, -,${MODEL_DATA.intercept},${MODEL_DATA.intercept}\n`;
+      
+      let finalPred = MODEL_DATA.intercept;
+      Object.keys(MODEL_DATA.features).forEach(feat => {
+        const meta = MODEL_DATA.features[feat];
+        const raw = currentValues[feat];
+        const z = (raw - meta.mean) / meta.std;
+        const delta = meta.beta * z;
+        finalPred += delta;
+        csv += `"${meta.name}",${raw},${meta.mean.toFixed(4)},${meta.std.toFixed(4)},${z.toFixed(4)},${meta.beta.toFixed(4)},${delta.toFixed(4)}\n`;
+      });
+
+      csv += `\nPredicted_Trust_Score,${finalPred.toFixed(2)}\n`;
+      csv += `95_CI_Lower,${Math.max(0, finalPred - 1.96 * MODEL_DATA.rmse).toFixed(2)}\n`;
+      csv += `95_CI_Upper,${Math.min(100, finalPred + 1.96 * MODEL_DATA.rmse).toFixed(2)}\n`;
+
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `trust_prediction_scenario_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast("情境數據已成功匯出為 CSV 檔！", "📥");
+    }
+
+    // Copy Diagnostic Report
+    function copyDiagnosticReport() {
+      const score = document.getElementById("score-val").textContent;
+      const ci = document.getElementById("ci-range").textContent;
+      const tierTitle = document.getElementById("tier-title").textContent;
+      const tierDesc = document.getElementById("tier-desc").textContent;
+
+      let text = `【Human-AI 信任度多元線性回歸預測診斷報告】\n`;
+      text += `學號：7114068027 | 姓名：陳沐德\n`;
+      text += `模型指標：R² = 0.6816 | RMSE = 5.1838 | F = 1,489.71 (p < 0.0001***)\n`;
+      text += `--------------------------------------------------\n`;
+      text += `🎯 預測信任分數：${score} / 100 分\n`;
+      text += `📊 95% 統計信賴區間：${ci}\n`;
+      text += `🛡️ 系統授權等級：${tierTitle}\n`;
+      text += `💡 決策指導建議：${tierDesc}\n`;
+      text += `--------------------------------------------------\n`;
+      text += `特徵當前參數配置：\n`;
+      
+      Object.keys(MODEL_DATA.features).forEach(f => {
+        text += `• ${MODEL_DATA.features[f].name}: ${currentValues[f]}\n`;
+      });
+      text += `--------------------------------------------------\n`;
+      text += `線上計算機體驗：https://naz0914.github.io/test/\n`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("已成功將診斷報告複製至剪貼簿！", "📋");
+      }).catch(() => {
+        showToast("剪貼簿存取失敗，請手動複製", "⚠️");
+      });
+    }
+
+    // Window onload init
+    window.addEventListener("DOMContentLoaded", () => {
+      initInputs();
+      initCharts();
+      recalculate();
+    });
+  </script>
+</body>
+</html>
