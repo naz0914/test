@@ -285,19 +285,38 @@ Saved analysis_results.json successfully!
 ### 3. 多元線性回歸模型精準數學公式 (Estimated Equation)
 經由本機 Python 擬合後，模型的截距項與各特徵之標準化迴歸係數如下：
 
+```python
+# 多元線性回歸擬合方程式 (以標準化特徵計算)
+predicted_latent_trust_score = (
+    70.4979
+    + 4.2505 * trust_history
+    + 2.8357 * feedback_quality
+    + 1.5372 * model_accuracy
+    + 0.1238 * domain
+    + 0.1191 * override_frequency
+    + 0.0844 * education_level
+    + 0.0821 * prior_ai_exposure
+    - 0.0622 * technical_experience
+    - 1.3505 * error_rate
+    - 1.4625 * cognitive_load
+    - 2.8869 * bias_level
+    - 3.4055 * ui_complexity
+)
+```
+
 $$\begin{aligned}
-\widehat{\text{latent\_trust\_score}} = 70.4979 &+ 4.2505 \times \text{trust\_history} \\
-&+ 2.8357 \times \text{feedback\_quality} \\
-&+ 1.5372 \times \text{model\_accuracy} \\
-&+ 0.1238 \times \text{domain} \\
-&+ 0.1191 \times \text{override\_frequency} \\
-&+ 0.0844 \times \text{education\_level} \\
-&+ 0.0821 \times \text{prior\_ai\_exposure} \\
-&- 0.0622 \times \text{technical\_experience} \\
-&- 1.3505 \times \text{error\_rate} \\
-&- 1.4625 \times \text{cognitive\_load} \\
-&- 2.8869 \times \text{bias\_level} \\
-&- 3.4055 \times \text{ui\_complexity}
+\widehat{Y}_{\text{Trust}} = 70.4979 &+ 4.2505 \times (\text{Trust History}) \\
+&+ 2.8357 \times (\text{Feedback Quality}) \\
+&+ 1.5372 \times (\text{Model Accuracy}) \\
+&+ 0.1238 \times (\text{Domain}) \\
+&+ 0.1191 \times (\text{Override Frequency}) \\
+&+ 0.0844 \times (\text{Education Level}) \\
+&+ 0.0821 \times (\text{Prior AI Exposure}) \\
+&- 0.0622 \times (\text{Technical Experience}) \\
+&- 1.3505 \times (\text{Error Rate}) \\
+&- 1.4625 \times (\text{Cognitive Load}) \\
+&- 2.8869 \times (\text{Bias Level}) \\
+&- 3.4055 \times (\text{UI Complexity})
 \end{aligned}$$
 
 #### 係數細部清單 (由正向到負向排序)：
