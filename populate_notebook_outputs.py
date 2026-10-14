@@ -8,7 +8,7 @@ def populate_outputs():
     with open('feature_importance.png', 'rb') as f:
         feat_plot_b64 = base64.b64encode(f.read()).decode('utf-8')
         
-    with open('7114056XXX_hw2.ipynb', 'r', encoding='utf-8') as f:
+    with open('7114068027_hw2.ipynb', 'r', encoding='utf-8') as f:
         nb = json.load(f)
         
     # Cell 2: Imports (index 2)
@@ -154,9 +154,9 @@ def populate_outputs():
         ]
     }]
     
-    with open('7114056XXX_hw2.ipynb', 'w', encoding='utf-8') as f:
+    with open('7114068027_hw2.ipynb', 'w', encoding='utf-8') as f:
         json.dump(nb, f, ensure_ascii=False, indent=2)
-    print("Populated 7114056XXX_hw2.ipynb with rich outputs and high-res plots successfully!")
+    print("Populated 7114068027_hw2.ipynb with rich outputs and high-res plots successfully!")
 
 if __name__ == '__main__':
     populate_outputs()

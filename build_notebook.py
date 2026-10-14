@@ -11,7 +11,7 @@ def create_notebook():
                 "## 專案題目：Human-AI Interaction 人類與 AI 互動信任度預測與特徵選擇\n",
                 "\n",
                 "- **學生姓名**：陳沐德\n",
-                "- **學生學號**：7114056XXX\n",
+                "- **學生學號**：7114068027\n",
                 "- **指導教授**：機器學習與巨量資料分析課程團隊\n",
                 "- **作業目的**：基於 CRISP-DM 流程，針對 Kaggle Human-AI Interaction 資料集進行特徵篩選 (RFE/Lasso)、多元線性回歸建模、信賴區間視覺化評估以及模擬部署預測。\n"
             ]
@@ -356,9 +356,9 @@ def create_notebook():
         "nbformat_minor": 5
     }
     
-    with open('7114056XXX_hw2.ipynb', 'w', encoding='utf-8') as f:
+    with open('7114068027_hw2.ipynb', 'w', encoding='utf-8') as f:
         json.dump(notebook, f, ensure_ascii=False, indent=2)
-    print("Notebook 7114056XXX_hw2.ipynb created successfully!")
+    print("Notebook 7114068027_hw2.ipynb created successfully!")
 
 if __name__ == '__main__':
     create_notebook()

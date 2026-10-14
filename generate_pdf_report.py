@@ -14,7 +14,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 pdfmetrics.registerFont(TTFont('MSJH', r'C:\Windows\Fonts\msjh.ttc', subfontIndex=0))
 pdfmetrics.registerFont(TTFont('MSJH-Bold', r'C:\Windows\Fonts\msjhbd.ttc', subfontIndex=0))
 
-def build_pdf(filename="7114056XXX_hw2_report.pdf"):
+def build_pdf(filename="7114068027_hw2_report.pdf"):
     # Load analysis results
     with open('analysis_results.json', 'r', encoding='utf-8') as f:
         res = json.load(f)
@@ -122,7 +122,7 @@ def build_pdf(filename="7114056XXX_hw2_report.pdf"):
     # Meta Info Table
     info_data = [
         [Paragraph("<b>學生姓名</b>", body_style), Paragraph("陳沐德", body_style),
-         Paragraph("<b>學生學號</b>", body_style), Paragraph("7114056XXX", body_style)],
+         Paragraph("<b>學生學號</b>", body_style), Paragraph("7114068027", body_style)],
         [Paragraph("<b>作業名稱</b>", body_style), Paragraph("HW2 特徵選擇與迴歸預測", body_style),
          Paragraph("<b>繳交日期</b>", body_style), Paragraph("2026 年 10 月", body_style)],
         [Paragraph("<b>資料來源</b>", body_style), Paragraph("Kaggle Human-AI Interaction", body_style),
