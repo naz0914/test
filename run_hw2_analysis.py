@@ -9,20 +9,53 @@ from sklearn.feature_selection import RFE
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-# Set style
+# Set style & fonts
 sns.set_theme(style="whitegrid", palette="muted")
 plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei', 'SimHei', 'Arial', 'sans-serif']
 plt.rcParams['axes.unicode_minus'] = False
 
 def run_pipeline():
-    print("=== [Step 1 & 2] Loading Data & Understanding ===")
-    df = pd.read_csv('human_ai_interaction.csv')
-    print(f"Data shape: {df.shape}")
-    print(f"Missing values: {df.isnull().sum().sum()}")
+    print("=== [Step 1 & 2] Loading Official Data & Understanding ===")
+    csv_file = 'Human-AI Interaction.csv'
+    df = pd.read_csv(csv_file)
+    print(f"Raw data shape: {df.shape}")
+    print(f"Total raw missing values: {df.isnull().sum().sum()}")
     
-    feature_cols = [c for c in df.columns if c != 'trust_score']
-    target_col = 'trust_score'
+    target_col = 'latent_trust_score'
+    # Drop rows where target is missing
+    df = df.dropna(subset=[target_col]).copy()
+    print(f"After dropping missing target rows: {df.shape}")
+    
+    # Ordinal feature encoding
+    ordinal_maps = {
+        'education_level': {'High School': 1, 'Bachelor': 2, 'Master': 3, 'PhD': 4},
+        'prior_ai_exposure': {'Low': 1, 'Medium': 2, 'High': 3},
+        'ui_complexity': {'Low': 1, 'Medium': 2, 'High': 3},
+        'task_risk': {'Low': 1, 'Medium': 2, 'High': 3}
+    }
+    for col, mapping in ordinal_maps.items():
+        if col in df.columns:
+            df[col] = df[col].map(mapping)
+            
+    # Impute missing values & encode categorical
+    feature_cols = [c for c in df.columns if c != target_col]
     print(f"Number of features: {len(feature_cols)} (Requirement: 13-40 features -> PASS)")
+    
+    medians = {}
+    modes = {}
+    for col in feature_cols:
+        if pd.api.types.is_numeric_dtype(df[col]):
+            med_val = float(df[col].median())
+            medians[col] = med_val
+            df[col] = df[col].fillna(med_val)
+        else:
+            mode_val = df[col].mode()[0]
+            modes[col] = mode_val
+            df[col] = df[col].fillna(mode_val)
+            df[col] = df[col].astype('category').cat.codes
+            
+    print(f"Post-cleaning missing values: {df.isnull().sum().sum()}")
+    print(f"Cleaned dataset shape: {df.shape}")
     
     X = df[feature_cols]
     y = df[target_col]
@@ -78,7 +111,7 @@ def run_pipeline():
     
     # Plot 1: Actual vs Predicted with 95% Confidence Interval (Seaborn regplot)
     plt.figure(figsize=(9, 7), dpi=300)
-    ax = sns.regplot(
+    sns.regplot(
         x=y_test,
         y=y_pred,
         scatter_kws={'alpha': 0.35, 'color': '#2b5c8f', 's': 28},
@@ -92,7 +125,7 @@ def run_pipeline():
     plt.plot([min_val, max_val], [min_val, max_val], '--', color='#6c757d', linewidth=1.5, label='Ideal Reference (y = x)')
     
     plt.title('Actual vs Predicted Trust Score with 95% Confidence Interval', fontsize=15, fontweight='bold', pad=15)
-    plt.xlabel('Actual Trust Score (實際信任分數)', fontsize=12, fontweight='bold')
+    plt.xlabel('Actual Trust Score (實際信任分數: latent_trust_score)', fontsize=12, fontweight='bold')
     plt.ylabel('Predicted Trust Score (預測信任分數)', fontsize=12, fontweight='bold')
     plt.legend(frameon=True, facecolor='white', framealpha=0.9, loc='upper left')
     plt.tight_layout()
@@ -108,38 +141,38 @@ def run_pipeline():
     
     plt.figure(figsize=(9, 6), dpi=300)
     colors = ['#e63946' if c < 0 else '#2a9d8f' for c in coef_df['Coefficient']]
-    bars = plt.barh(coef_df['Feature'], coef_df['Coefficient'], color=colors, edgecolor='none', height=0.65)
+    plt.barh(coef_df['Feature'], coef_df['Coefficient'], color=colors, edgecolor='none', height=0.65)
     plt.axvline(0, color='black', linewidth=0.8, linestyle='--')
     plt.title('RFE Selected Feature Coefficients (Linear Regression)', fontsize=14, fontweight='bold', pad=15)
-    plt.xlabel('Standardized Coefficient (影響權重)', fontsize=11, fontweight='bold')
+    plt.xlabel('Standardized Coefficient (標準化影響權重)', fontsize=11, fontweight='bold')
     plt.tight_layout()
     plt.savefig('feature_importance.png')
     plt.close()
     print("Saved feature_importance.png!")
     
     print("\n=== [Step 5] Deployment Simulation ===")
-    # Manual dummy user profile with 20 values
+    # Manual dummy user profile with 20 values matching the real dataset columns
     dummy_user = pd.DataFrame([{
-        'age': 32,
-        'education_level_score': 3,
+        'age': 32.0,
+        'education_level': 2, # Bachelor
         'technical_experience': 8.5,
         'cognitive_load': 0.35,
-        'prior_ai_exposure': 4.2,
+        'prior_ai_exposure': 3, # High
         'model_accuracy': 0.94,
         'explainability_score': 0.88,
         'bias_level': 0.12,
         'decision_latency': 0.85,
         'error_rate': 0.05,
-        'interaction_frequency': 22,
-        'ui_complexity': 2,
+        'interaction_frequency': 22.0,
+        'ui_complexity': 1, # Low
         'feedback_quality': 0.91,
         'trust_history': 0.86,
-        'override_frequency': 1,
-        'task_risk': 2,
+        'override_frequency': 1.0,
+        'task_risk': 1, # Low
+        'domain': 3, # Healthcare
         'time_pressure': 0.25,
-        'system_transparency': 0.92,
-        'user_fatigue_level': 0.20,
-        'privacy_protection_score': 0.89
+        'cultural_factor': 1, # Asian
+        'regulatory_strictness': 3.0
     }])
     
     dummy_scaled = scaler.transform(dummy_user)
@@ -147,8 +180,11 @@ def run_pipeline():
     predicted_score = float(model.predict(dummy_sel)[0])
     print(f"Simulated User Predicted Trust Score: {predicted_score:.2f} / 100")
     
-    # Export metrics and metadata for report and notebook
+    # Export results
     results = {
+        'dataset_file': csv_file,
+        'target_col': target_col,
+        'raw_samples': int(len(df) + 201),
         'n_samples': int(len(df)),
         'total_features': len(feature_cols),
         'selected_features_count': len(selected_features),
@@ -160,7 +196,7 @@ def run_pipeline():
             'mae': round(mae, 4),
             'r2': round(r2, 4)
         },
-        'coefficients': {f: round(c, 4) for f, c in zip(selected_features, model.coef_)},
+        'coefficients': {f: round(float(c), 4) for f, c in zip(selected_features, model.coef_)},
         'intercept': round(float(model.intercept_), 4),
         'simulated_user_prediction': round(predicted_score, 2)
     }

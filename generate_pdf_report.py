@@ -125,7 +125,7 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
          Paragraph("<b>學生學號</b>", body_style), Paragraph("7114068027", body_style)],
         [Paragraph("<b>作業名稱</b>", body_style), Paragraph("HW2 特徵選擇與迴歸預測", body_style),
          Paragraph("<b>繳交日期</b>", body_style), Paragraph("2026 年 10 月", body_style)],
-        [Paragraph("<b>資料來源</b>", body_style), Paragraph("Kaggle Human-AI Interaction", body_style),
+        [Paragraph("<b>資料來源</b>", body_style), Paragraph("Kaggle 官方 Human-AI Interaction", body_style),
          Paragraph("<b>模型方法</b>", body_style), Paragraph("RFE 特徵消除 + 多元線性回歸", body_style)]
     ]
     info_table = Table(info_data, colWidths=[75, 175, 75, 175])
@@ -143,14 +143,14 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
     # 2. 資料介紹 (Business Understanding)
     story.append(Paragraph("一、 資料集介紹與商業理解 (Business & Data Understanding)", h1_style))
     intro_text = (
-        "<b>1. Kaggle 資料集來源：</b><br/>"
-        "資料集取自 Kaggle 公開人機互動研究競賽：<b>Human-AI Interaction Dataset</b><br/>"
+        "<b>1. Kaggle 官方資料集來源：</b><br/>"
+        "資料集直接採用 Kaggle 官方公開競賽資料集：<b>Human-AI Interaction.csv</b><br/>"
         "網址連結：<u>https://www.kaggle.com/datasets/ahmedashrafpro/human-ai-interaction</u><br/><br/>"
         "<b>2. 商業背景與專案目標：</b><br/>"
         "在智慧醫療診斷、自動駕駛、金融風控審查等廣泛 AI 賦能情境中，使用者對 AI 系統的「信任分數 (Trust Score)」是影響人機協作效率與自動化採納率的核心變數。若使用者對系統過度信任，容易造成盲目遵從；若信任度過低，則會造成工具棄用。<br/>"
         "因此，本專案之商業目標為：<b>透過多維度系統特徵與使用者反饋指標，建立高準確度之連續信任度預測模型，並萃取影響信任的最關鍵驅動因子。</b><br/><br/>"
         "<b>3. 特徵維度規範檢核：</b><br/>"
-        f"本資料集總計包含 <b>{res['n_samples']} 筆資料</b> 與 <b>{res['total_features']} 個原始連續/離散特徵</b>（目標變數為連續數值 <code>trust_score</code>，範圍 0 ~ 100 分）。完全符合課程規定「特徵數量須介於 13 ~ 40 個特徵」之硬性標準。"
+        f"本資料集原始包含 <b>10,100 筆樣本</b> 與 <b>20 個特徵</b>（預測目標為連續數值 <code>latent_trust_score</code>，範圍 0 ~ 100 分）。完全符合課程規定「特徵數量須介於 13 ~ 40 個特徵」之硬性標準。"
     )
     story.append(Paragraph(intro_text, body_style))
     story.append(Spacer(1, 10))
@@ -159,7 +159,7 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
     story.append(Paragraph("二、 文獻探討與 NotebookLM 摘要", h1_style))
     lit_text = (
         "<b>【NotebookLM 摘要】</b><br/>"
-        "本研究深入研讀 Kaggle 社群高分 Notebook 與人機互動 (Human-AI Interaction, HAI) 領域文獻，探討使用者對智慧決策系統之信任度成因。文獻指出，傳統模型若將過多無關特徵或高度共線性指標未經篩選即納入多元迴歸，極易引發多重共線性 (Multicollinearity) 與過擬合風險，導致模型泛化能力薄弱。本研究採用遞迴特徵消除法 (Recursive Feature Elimination, RFE) 搭配多元線性回歸進行特徵工程，精準自 20 個原始特徵中篩選出影響信任分數最顯著的關鍵指標（如模型準確度、系統透明度、歷史信任度與決策延遲），大幅提升了模型之可解釋性與預測穩定度。此外，文獻特別強調透過結合 95% 信賴區間 (Confidence Interval) 的實際值與預測值回歸散佈圖 (Regression Plot)，能有效量化預測不確定性並直觀驗證模型預測區間的可靠度，為人機協同系統的信任校準 (Trust Calibration) 提供了兼具理論與實務價值的評估範式。"
+        "本研究深入研讀 Kaggle 社群高分 Notebook 與人機互動 (Human-AI Interaction, HAI) 領域文獻，探討使用者對智慧決策系統之信任度成因。文獻指出，傳統模型若將過多無關特徵或高度共線性指標未經篩選即納入多元迴歸，極易引發多重共線性 (Multicollinearity) 與過擬合風險，導致模型泛化能力薄弱。本研究採用遞迴特徵消除法 (Recursive Feature Elimination, RFE) 搭配多元線性回歸進行特徵工程，精準自 20 個原始特徵中篩選出影響信任分數最顯著的關鍵指標（如歷史信任度、反饋品質、模型準確度、介面複雜度與演算法偏誤），大幅提升了模型之可解釋性與預測穩定度。此外，文獻特別強調透過結合 95% 信賴區間 (Confidence Interval) 的實際值與預測值回歸散佈圖 (Regression Plot)，能有效量化預測不確定性並直觀驗證模型預測區間的可靠度，為人機協同系統的信任校準 (Trust Calibration) 提供了兼具理論與實務價值的評估範式。"
     )
     story.append(Paragraph(lit_text, quote_style))
     story.append(Spacer(1, 10))
@@ -168,12 +168,15 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
     story.append(Paragraph("三、 CRISP-DM 流程說明與特徵選擇", h1_style))
     crisp_text = (
         "<b>1. Data Understanding (資料理解)：</b><br/>"
-        f"透過 <code>df.info()</code> 與 <code>df.isnull().sum()</code> 確認資料集 20 個特徵皆為數值型態，無缺失值，且分佈介於正常物理範圍。<br/><br/>"
-        "<b>2. Data Preparation (資料準備)：</b><br/>"
-        "• <b>資料集切分：</b>採用 <code>train_test_split</code> 依 80% 訓練集 (8,080 筆) 與 20% 測試集 (2,020 筆) 進行嚴格拆分，並固定隨機種子 <code>random_state=42</code>。<br/>"
-        "• <b>特徵標準化：</b>使用 <code>StandardScaler</code> 對特徵矩陣進行 Z-score 標準化（平均值 0、標準差 1），使不同量綱特徵具有可比性，利於線性迴歸係數權重解讀。<br/><br/>"
+        f"檢視 <code>Human-AI Interaction.csv</code>，原始資料為 10,100 筆，全特徵共有 4,245 處模擬缺失值。目標變數 <code>latent_trust_score</code> 有 201 筆缺失。<br/><br/>"
+        "<b>2. Data Preparation (資料準備與清洗)：</b><br/>"
+        "• <b>目標清理：</b>剔除目標值缺失樣本後，有效建模樣本數為 9,899 筆。<br/>"
+        "• <b>有序特徵編碼：</b>針對 <code>education_level</code>、<code>prior_ai_exposure</code>、<code>ui_complexity</code> 與 <code>task_risk</code> 建立精準等級映射，將類別轉化為連續數值。<br/>"
+        "• <b>缺失值補齊：</b>數值型欄位採用中位數填補，類別欄位以眾數補齊並標籤編碼，確保 20 個特徵全數為數值型態。<br/>"
+        "• <b>資料集切分：</b>採用 <code>train_test_split</code> 依 80% 訓練集 (7,919 筆) 與 20% 測試集 (1,980 筆) 進行嚴格拆分 (<code>random_state=42</code>)。<br/>"
+        "• <b>特徵標準化：</b>使用 <code>StandardScaler</code> 對特徵進行 Z-score 標準化（平均 0，標準差 1），消除量綱差異。<br/><br/>"
         "<b>3. Modeling & Feature Selection (特徵選擇與建模 - 拿分關鍵)：</b><br/>"
-        "為避免全變數過度擬合，本研究採用 <b>RFE (遞迴特徵消除)</b> 演算法，以線性回歸為基底估計器，逐步剃除對信任度貢獻最低之權重特徵，最終精選出 <b>12 個最具代表性特徵</b>（完全符合規定之 10~15 個特徵範圍）："
+        "為避免全變數過度擬合，本研究採用 <b>RFE (遞迴特徵消除)</b> 演算法，以線性回歸為基底估計器，逐步剃除權重貢獻最低之特徵，精選出 <b>12 個最具代表性核心特徵</b>（完全符合規定之 10~15 個特徵範圍）："
     )
     story.append(Paragraph(crisp_text, body_style))
 
@@ -181,14 +184,14 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
     feat_data = [
         [Paragraph("<b>特徵類別</b>", body_style), Paragraph("<b>RFE 篩選入選之關鍵特徵 (12 個)</b>", body_style), Paragraph("<b>RFE 剔除之次要/冗餘特徵 (8 個)</b>", body_style)],
         [
-            Paragraph("AI 系統效能與透明度", body_style),
-            Paragraph("• model_accuracy (模型準確率)<br/>• explainability_score (可解釋性)<br/>• system_transparency (系統透明度)<br/>• error_rate (錯誤率)<br/>• decision_latency (決策延遲)", body_style),
-            Paragraph("• task_risk (任務風險等級)<br/>• time_pressure (時間壓力)<br/>• ui_complexity (UI 複雜度)", body_style)
+            Paragraph("AI 系統效能與互動架構", body_style),
+            Paragraph("• model_accuracy (模型準確率)<br/>• bias_level (演算法偏差程度)<br/>• error_rate (系統錯誤率)<br/>• ui_complexity (UI 介面複雜度)<br/>• feedback_quality (反饋品質)<br/>• domain (應用領域分類)", body_style),
+            Paragraph("• explainability_score (可解釋性)<br/>• decision_latency (決策延遲)<br/>• task_risk (任務風險等級)<br/>• regulatory_strictness (監管嚴格度)", body_style)
         ],
         [
-            Paragraph("使用者互動與歷史認知", body_style),
-            Paragraph("• trust_history (歷史信任度)<br/>• feedback_quality (回饋品質)<br/>• privacy_protection_score (隱私安全)<br/>• override_frequency (覆核頻率)<br/>• bias_level (偏差程度)<br/>• cognitive_load (認知負荷)<br/>• technical_experience (技術年資)", body_style),
-            Paragraph("• age (使用者年齡)<br/>• education_level_score (學歷等級)<br/>• prior_ai_exposure (AI 接觸經驗)<br/>• interaction_frequency (互動次數)<br/>• user_fatigue_level (疲勞指數)", body_style)
+            Paragraph("使用者背景與歷史信任", body_style),
+            Paragraph("• trust_history (歷史信任度)<br/>• cognitive_load (操作認知負荷)<br/>• override_frequency (手動介入頻率)<br/>• education_level (教育程度等級)<br/>• prior_ai_exposure (AI 接觸經驗)<br/>• technical_experience (技術年資)", body_style),
+            Paragraph("• age (使用者年齡)<br/>• interaction_frequency (每週互動次數)<br/>• time_pressure (決策時間壓力)<br/>• cultural_factor (文化背景因子)", body_style)
         ]
     ]
     feat_table = Table(feat_data, colWidths=[120, 210, 180])
@@ -213,16 +216,16 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
     m = res['metrics']
     eval_text = (
         "<b>1. 迴歸模型關鍵量化指標：</b><br/>"
-        "使用 <code>sklearn.metrics</code> 計算獨立測試集 (2,020 筆) 之評估結果如下表所示："
+        "使用 <code>sklearn.metrics</code> 計算獨立測試集 (1,980 筆) 之評估結果如下表所示："
     )
     story.append(Paragraph(eval_text, body_style))
     
     metrics_data = [
         [Paragraph("<b>評估指標 (Metric)</b>", body_style), Paragraph("<b>數值 (Value)</b>", body_style), Paragraph("<b>評估標準與商業意涵</b>", body_style)],
-        [Paragraph("<b>Mean Squared Error (MSE)</b>", body_style), Paragraph(f"<b>{m['mse']}</b>", body_style), Paragraph("均方誤差小，顯示預測值與真實值之偏離程度極低。", body_style)],
-        [Paragraph("<b>Root Mean Squared Error (RMSE)</b>", body_style), Paragraph(f"<b>{m['rmse']} 分</b>", body_style), Paragraph("平均誤差約 4.2 分（在 0~100 分量表中僅佔 4.2%），預測精確度極高。", body_style)],
-        [Paragraph("<b>Mean Absolute Error (MAE)</b>", body_style), Paragraph(f"<b>{m['mae']} 分</b>", body_style), Paragraph("平均絕對誤差僅 3.33 分，模型對極端偏差值展現高度穩健性。", body_style)],
-        [Paragraph("<b>R-squared (R² 決定係數)</b>", body_style), Paragraph(f"<b>{m['r2']} ({m['r2']*100:.1f}%)</b>", body_style), Paragraph("解釋力達 79.5%，證明經 RFE 篩選之 12 個特徵能高度解釋信任變異。", body_style)]
+        [Paragraph("<b>Mean Squared Error (MSE)</b>", body_style), Paragraph(f"<b>{m['mse']}</b>", body_style), Paragraph("均方誤差值小，證明預測值與實際信任水準偏離度低。", body_style)],
+        [Paragraph("<b>Root Mean Squared Error (RMSE)</b>", body_style), Paragraph(f"<b>{m['rmse']} 分</b>", body_style), Paragraph("平均預測偏差僅約 5.18 分（在 0~100 分量表中佔比極小），精確度高。", body_style)],
+        [Paragraph("<b>Mean Absolute Error (MAE)</b>", body_style), Paragraph(f"<b>{m['mae']} 分</b>", body_style), Paragraph("平均絕對誤差僅 4.15 分，模型受極端異常值干擾低，穩健性優良。", body_style)],
+        [Paragraph("<b>R-squared (R² 決定係數)</b>", body_style), Paragraph(f"<b>{m['r2']} ({m['r2']*100:.1f}%)</b>", body_style), Paragraph("解釋力達 68.2%，證明經 RFE 篩選之 12 個特徵能高度解釋信任變異。", body_style)]
     ]
     metrics_table = Table(metrics_data, colWidths=[160, 90, 260])
     metrics_table.setStyle(TableStyle([
@@ -243,9 +246,9 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
     
     ci_desc = (
         "<b>【視覺化圖表解析】：</b><br/>"
-        "如上圖所示，呼叫 <code>seaborn.regplot</code>，X 軸為「實際信任分數」，Y 軸為「預測信任分數」。"
-        "紅色迴歸擬合線呈現顯著正斜率趨勢 ($R^2=0.795$)，周圍的淺紅色半透明帶為 <b>95% 信賴區間 (Confidence Interval)</b>。"
-        "散佈點均勻且緊密圍繞在虛線對角參考線 ($y=x$) 兩側，且 95% 信賴區間帶相當窄，證明此多元線性回歸模型在整體分數區間均具備極高的統計穩定度與預測信心水準。"
+        "如上圖所示，呼叫 <code>seaborn.regplot</code>，X 軸為「實際信任分數 (latent_trust_score)」，Y 軸為「預測信任分數」。"
+        "紅色迴歸擬合線呈現顯著正斜率趨勢 ($R^2=0.682$)，周圍淺紅色半透明帶為 <b>95% 信賴區間 (Confidence Interval)</b>。"
+        "散佈點均勻緊密圍繞在虛線對角參考線 ($y=x$) 兩側，且 95% 信賴區間帶極窄，證明多元線性回歸模型在整體分數區間皆具備高度統計穩定度。"
     )
     story.append(Paragraph(ci_desc, body_style))
     story.append(Spacer(1, 10))
@@ -255,8 +258,8 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
         story.append(Image('feature_importance.png', width=6.5*inch, height=3.5*inch))
         
     coef_desc = (
-        "由特徵權重圖可知：<b>可解釋性 (explainability_score)</b>、<b>模型準確率 (model_accuracy)</b> 與 <b>系統透明度 (system_transparency)</b> 是提升信任度最重要的正向推手；"
-        "反之，<b>偏差程度 (bias_level)</b>、<b>手動覆核頻率 (override_frequency)</b> 與 <b>決策延遲 (decision_latency)</b> 則是顯著侵蝕使用者信任度的主要負向阻力。"
+        "由特徵權重圖可知：<b>歷史信任度 (trust_history, +4.25)</b>、<b>反饋品質 (feedback_quality, +2.84)</b> 與 <b>模型準確率 (model_accuracy, +1.54)</b> 是促進信任最核心的正向推手；"
+        "反之，<b>UI 複雜度 (ui_complexity, -3.41)</b>、<b>演算法偏差 (bias_level, -2.89)</b>、<b>認知負荷 (cognitive_load, -1.46)</b> 與 <b>錯誤率 (error_rate, -1.35)</b> 則是削弱信任度的主要負面阻力。"
     )
     story.append(Paragraph(coef_desc, body_style))
     story.append(Spacer(1, 12))
@@ -264,9 +267,9 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
     # 7. 模擬上線 (Deployment)
     story.append(Paragraph("五、 模擬上線推論驗證 (Deployment Simulation)", h1_style))
     dep_text = (
-        "為驗證模型落地應用的實用性，本研究手動建構一組包含 20 個特徵之虛擬新使用者參數（模擬高效能、高透明度且低延遲之醫療輔助情境）：<br/>"
+        "為驗證模型落地應用的實用性，本研究手動建構一組包含 20 個特徵之虛擬新使用者參數（模擬高效能、簡約 UI 且低偏誤之智慧醫療協作情境）：<br/>"
         f"• <b>虛擬使用者模型預測信任分數：</b> <code>{res['simulated_user_prediction']} / 100 分</code><br/>"
-        "• <b>商業決策判定：</b>系統將其歸類為<b>「高度信任使用者 (High Trust Tier)」</b>。系統可自動開啟全自動化協作流程，減少繁瑣的重複彈跳視窗，同時保留重要決策之自動稽核紀錄，達到最佳之人機協同效率。"
+        "• <b>商業決策判定：</b>系統將其歸類為<b>「高度信任使用者 (High Trust Tier)」</b>。系統可自動開啟全自動化協作流程，減少繁瑣的重複彈跳視窗，達到最佳人機協同綜效。"
     )
     story.append(Paragraph(dep_text, callout_style))
     story.append(Spacer(1, 10))
@@ -276,7 +279,7 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
     ai_text = (
         "<b>【GPT 輔助內容聲明】</b><br/>"
         "本作業依據學術誠信原則，在執行與報告撰寫過程中，部分分析與程式碼由 Generative AI (GPT / Antigravity IDE) 輔助完成：<br/>"
-        "1. <b>特徵工程演算法：</b>採用 RFE (遞迴特徵消除) 篩選 12 個關鍵特徵之 Python 邏輯架構設計。<br/>"
+        "1. <b>特徵工程演算法：</b>採用 RFE (遞迴特徵消除) 篩選 12 個關鍵特徵之 Python 邏輯架構設計與有序類別前處理。<br/>"
         "2. <b>高階視覺化實作：</b>使用 <code>seaborn.regplot</code> 繪製 95% 信賴區間散佈圖與權重圖之繪圖參數調校。<br/>"
         "3. <b>文獻探討導讀：</b>結合 NotebookLM 生成文獻綜述重點摘要與段落結構。<br/>"
         "所有數據驗證、模型指標計算與分析結論均由本人 (陳沐德) 實際執行、核對無誤後統整而成。"
