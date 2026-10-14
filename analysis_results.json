@@ -1,0 +1,51 @@
+{
+  "n_samples": 10100,
+  "total_features": 20,
+  "selected_features_count": 12,
+  "selected_features": [
+    "technical_experience",
+    "cognitive_load",
+    "model_accuracy",
+    "explainability_score",
+    "bias_level",
+    "decision_latency",
+    "error_rate",
+    "feedback_quality",
+    "trust_history",
+    "override_frequency",
+    "system_transparency",
+    "privacy_protection_score"
+  ],
+  "eliminated_features": [
+    "age",
+    "education_level_score",
+    "prior_ai_exposure",
+    "interaction_frequency",
+    "ui_complexity",
+    "task_risk",
+    "time_pressure",
+    "user_fatigue_level"
+  ],
+  "metrics": {
+    "mse": 17.6401,
+    "rmse": 4.2,
+    "mae": 3.3278,
+    "r2": 0.7949
+  },
+  "coefficients": {
+    "technical_experience": 0.0682,
+    "cognitive_load": -1.2231,
+    "model_accuracy": 3.3838,
+    "explainability_score": 3.5994,
+    "bias_level": -2.4719,
+    "decision_latency": -1.6403,
+    "error_rate": -1.5404,
+    "feedback_quality": 1.9881,
+    "trust_history": 2.7035,
+    "override_frequency": -2.1027,
+    "system_transparency": 2.9175,
+    "privacy_protection_score": 1.4345
+  },
+  "intercept": 63.6183,
+  "simulated_user_prediction": 91.45
+}
