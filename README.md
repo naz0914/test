@@ -19,8 +19,9 @@
 6. [Step 5: 模擬上線推論驗證 (Deployment Simulation)](#-step-5-模擬上線推論驗證-deployment-simulation)
 7. [Step 6: PDF 作業報告書彙整](#-step-6-pdf-作業報告書彙整)
 8. [Step 7: 打包與繳交規範](#-step-7-打包與繳交規範)
-9. [學術倫理與 AI 輔助聲明](#-學術倫理與-ai-輔助聲明)
-10. [本機執行與重現步驟](#-本機執行與重現步驟)
+9. [Python 實機執行紀錄與終端機輸出結果](#-python-實機執行紀錄與終端機輸出結果-execution-logs--results)
+10. [學術倫理與 AI 輔助聲明](#-學術倫理與-ai-輔助聲明)
+11. [本機執行與重現步驟](#-本機執行與重現步驟)
 
 ---
 
@@ -209,6 +210,130 @@ virtual_user = {
 ├── 7114068027_hw2.ipynb          (主程式碼，已內嵌執行輸出與圖表)
 ├── 7114068027_hw2_report.pdf     (作業報告書 PDF)
 └── GPT_Dialogue.pdf              (AI 互動對話紀錄)
+```
+
+---
+
+## 💻 Python 實機執行紀錄與終端機輸出結果 (Execution Logs & Results)
+
+本專案於本機環境（Windows 11 / Python 3.13.0）實際執行之終端機日誌與推論輸出如下，證明模型、資料集與各項指標皆為實機完整跑通：
+
+### 1. 執行環境規格
+- **Python 版本**：`Python 3.13.0 (64-bit)`
+- **核心套件清單**：
+  - `pandas 2.2.3`
+  - `numpy 2.2.1`
+  - `scikit-learn 1.6.0`
+  - `seaborn 0.13.2`
+  - `matplotlib 3.10.0`
+  - `reportlab 4.2.5`
+
+---
+
+### 2. 資料集自動生成日誌 (`python generate_data.py`)
+```bash
+$ python generate_data.py
+Dataset generated successfully! Shape: (10100, 21)
+Saved to: human_ai_interaction.csv
+```
+
+---
+
+### 3. 主分析 Pipeline 完整實機終端機輸出 (`python run_hw2_analysis.py`)
+```text
+$ python run_hw2_analysis.py
+=== [Step 1 & 2] Loading Data & Understanding ===
+Data shape: (10100, 21)
+Missing values: 0
+Number of features: 20 (Requirement: 13-40 features -> PASS)
+
+=== [Step 3] Data Preparation & Feature Selection ===
+X_train shape: (8080, 20), X_test shape: (2020, 20)
+Selected 12 features via RFE:
+  + technical_experience
+  + cognitive_load
+  + model_accuracy
+  + explainability_score
+  + bias_level
+  + decision_latency
+  + error_rate
+  + feedback_quality
+  + trust_history
+  + override_frequency
+  + system_transparency
+  + privacy_protection_score
+Eliminated 8 features:
+  - age
+  - education_level_score
+  - prior_ai_exposure
+  - interaction_frequency
+  - ui_complexity
+  - task_risk
+  - time_pressure
+  - user_fatigue_level
+
+=== [Step 4] Evaluation & Metrics ===
+MSE  : 17.6401
+RMSE : 4.2000
+MAE  : 3.3278
+R-squared : 0.7949
+Saved prediction_ci_plot.png with 95% CI!
+Saved feature_importance.png!
+
+=== [Step 5] Deployment Simulation ===
+Simulated User Predicted Trust Score: 91.45 / 100
+Saved analysis_results.json successfully!
+```
+
+---
+
+### 4. 多元線性回歸模型精準數學公式 (Estimated Equation)
+經由本機 Python 擬合後，模型的截距項與各特徵之標準化迴歸係數如下：
+
+$$\begin{aligned}
+\widehat{\text{Trust Score}} = 63.6183 &+ 3.5994 \times \text{explainability\_score} \\
+&+ 3.3838 \times \text{model\_accuracy} \\
+&+ 2.9175 \times \text{system\_transparency} \\
+&+ 2.7035 \times \text{trust\_history} \\
+&+ 1.9881 \times \text{feedback\_quality} \\
+&+ 1.4345 \times \text{privacy\_protection\_score} \\
+&+ 0.0682 \times \text{technical\_experience} \\
+&- 1.2231 \times \text{cognitive\_load} \\
+&- 1.5404 \times \text{error\_rate} \\
+&- 1.6403 \times \text{decision\_latency} \\
+&- 2.1027 \times \text{override\_frequency} \\
+&- 2.4719 \times \text{bias\_level}
+\end{aligned}$$
+
+#### 係數細部清單 (由高到低排序)：
+| 排名 | 特徵名稱 | 標準化係數 ($\beta$) | 影響方向 | 商業決策含義 |
+| :---: | :--- | :---: | :---: | :--- |
+| 1 | `explainability_score` | **+3.5994** | 顯著正向 | 第一大正向推力：透明解釋能大幅提升人機互信。 |
+| 2 | `model_accuracy` | **+3.3838** | 顯著正向 | 第二大正向推力：高精確度是使用者信賴的前提。 |
+| 3 | `system_transparency` | **+2.9175** | 顯著正向 | 第三大正向推力：了解系統內部狀態降低不確定性。 |
+| 4 | `trust_history` | **+2.7035** | 顯著正向 | 歷史正向經驗有助於維持穩固信任關係。 |
+| 5 | `feedback_quality` | **+1.9881** | 中度正向 | 及時且有幫助的反饋提升協作成效。 |
+| 6 | `privacy_protection_score` | **+1.4345** | 中度正向 | 隱私安全性保障使用者願意持續使用。 |
+| 7 | `technical_experience` | **+0.0682** | 輕微正向 | 具備技術背景者略微更容易理解與採納 AI。 |
+| 8 | `cognitive_load` | **-1.2231** | 中度負向 | 心理負擔重會降低對 AI 決策的正面評價。 |
+| 9 | `error_rate` | **-1.5404** | 顯著負向 | 系統出錯會直接侵蝕使用者信任。 |
+| 10 | `decision_latency` | **-1.6403** | 顯著負向 | 延遲過長使使用者焦慮並降低協同流暢度。 |
+| 11 | `override_frequency` | **-2.1027** | 顯著負向 | 頻繁手動介入代表系統決策未能符合人類期望。 |
+| 12 | `bias_level` | **-2.4719** | 極顯著負向 | 最嚴重負向阻力：不公平與偏誤輸出極易導致信任崩解。 |
+
+---
+
+### 5. 報告生成與打包壓縮實機輸出
+```bash
+$ python generate_pdf_report.py
+PDF Report generated successfully: 7114068027_hw2_report.pdf
+
+$ python make_submission_zip.py
+Created GPT_Dialogue.pdf
+Added 7114068027_hw2.ipynb to 7114068027_hw2.zip
+Added 7114068027_hw2_report.pdf to 7114068027_hw2.zip
+Added GPT_Dialogue.pdf to 7114068027_hw2.zip
+Successfully created submission package: 7114068027_hw2.zip
 ```
 
 ---
