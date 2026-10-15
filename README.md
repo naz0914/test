@@ -1,7 +1,32 @@
 # 巨量資料分析與機器學習 - 作業二 (HW2)
 
-> 🔗 **專案 GitHub 儲存庫**：[https://github.com/naz0914/test](https://github.com/naz0914/test)  
-> 🌐 **StatsUnlock 風格互動式網頁計算機 (GitHub Pages)**：[https://naz0914.github.io/test/](https://naz0914.github.io/test/)
+> 🎓 **學生資訊**：陳沐德（學號：`7114068027`）  
+> 📌 **課程專案題目**：Human-AI Interaction 人類與 AI 互動信任度預測與特徵選擇
+
+---
+
+## 🎯 作業繳交項目快速導覽 (Categorized Deliverables & Links)
+
+依據作業二規範，所有指定繳交項目與相關成果分類整理如下，點擊即可直接開啟檔案或造訪網址：
+
+### 📦 核心繳交檔案 (Required Deliverables)
+| 繳交項目 | 檔案名稱 / 規格 | 說明與內容 | 快速存取連結 |
+| :--- | :--- | :--- | :---: |
+| **1. 完整主程式碼** | `7114068027_hw2.ipynb` | Jupyter Notebook 格式，依 CRISP-DM 流程撰寫，已內嵌完整輸出日誌與高解析視覺化圖表 | [開啟 Notebook](7114068027_hw2.ipynb) |
+| **2. 作業報告書 PDF** | `7114068027_hw2_report.pdf` | 正式排版之 4 頁 PDF 報告（含封面、Kaggle 來源、NotebookLM 摘要、特徵表格、95% CI 預測圖） | [下載/預覽 PDF](7114068027_hw2_report.pdf) |
+| **3. AI 對話紀錄 PDF** | `GPT_Dialogue.pdf` | 與 Generative AI (GPT) 協作與對話之歷程紀錄 PDF | [下載/預覽 PDF](GPT_Dialogue.pdf) |
+| **4. 作業總壓縮檔** | `7114068027_hw2.zip` | 依規定以學號命名之 ZIP 壓縮檔（內含上述 1~3 項主要繳交檔案） | [取得 ZIP 檔](7114068027_hw2.zip) |
+
+### 🌐 線上展示與雲端連結 (Online Repositories & Demos)
+- 🔗 **專案 GitHub 儲存庫**：[https://github.com/naz0914/test](https://github.com/naz0914/test)
+- 🌐 **StatsUnlock 風格互動式 Web 預測計算機 (GitHub Pages)**：[https://naz0914.github.io/test/](https://naz0914.github.io/test/)
+- 📊 **Kaggle 官方原始資料集**：[Kaggle - Human-AI Interaction Dataset](https://www.kaggle.com/datasets/ahmedashrafpro/human-ai-interaction)
+
+### 📊 專案關鍵視覺化與分析產出 (Analysis Artifacts)
+- 📈 **95% 信賴區間回歸預測散佈圖**：[`prediction_ci_plot.png`](prediction_ci_plot.png)
+- 📊 **RFE 精選 12 特徵之標準化影響權重圖**：[`feature_importance.png`](feature_importance.png)
+- 🔢 **模型參數與分佈統計檔**：[`analysis_results.json`](analysis_results.json) / [`model_stats.json`](model_stats.json)
+- 📄 **Kaggle 官方實體資料集 (10,100 筆)**：[`Human-AI Interaction.csv`](Human-AI Interaction.csv)
 
 ---
 
@@ -29,6 +54,7 @@
 ---
 
 ## 📑 目錄 (Table of Contents)
+0. [作業繳交項目快速導覽 (Categorized Deliverables & Links)](#-作業繳交項目快速導覽-categorized-deliverables--links)
 1. [專案架構與繳交檔案清單](#-專案架構與繳交檔案清單)
 2. [Step 1: 資料取得與商業理解 (Business Understanding)](#-step-1-資料取得與商業理解-business-understanding)
 3. [Step 2: 文獻探討與 NotebookLM 摘要 (Literature Review)](#-step-2-文獻探討與-notebooklm-摘要-literature-review)
