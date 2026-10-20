@@ -108,8 +108,13 @@ def make_zip(zip_name="7114068027_hw2.zip"):
     
     files_to_pack = [
         "7114068027_hw2.ipynb",
+        "7114068027_hw2.py",
         "7114068027_hw2_report.pdf",
-        "GPT_Dialogue.pdf"
+        "GPT_Dialogue.pdf",
+        "Human-AI Interaction.csv",
+        "prediction_ci_plot.png",
+        "feature_importance.png",
+        "README.md"
     ]
     
     with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as z:
