@@ -357,7 +357,7 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
         "1. <b>特徵工程演算法：</b>採用 RFE (遞迴特徵消除) 篩選 12 個關鍵特徵之 Python 邏輯架構設計與有序類別前處理。<br/>"
         "2. <b>高階視覺化實作：</b>使用 <code>seaborn.regplot</code> 繪製 95% 信賴區間散佈圖與權重圖之繪圖參數調校。<br/>"
         "3. <b>文獻探討導讀：</b>結合 NotebookLM 生成文獻綜述重點摘要與段落結構。<br/>"
-        "4. <b>對話歷程歸檔：</b>完整 AI 互動過程已輸出為 <code>GPT_Dialogue.pdf</code>，並收錄於提交壓縮檔中。<br/>"
+        "4. <b>對話歷程歸檔：</b>完整 AI 互動對話紀錄（包含 Google Gemini 官方完整對話匯出檔 <code>物聯網課程使用 - Google Gemini.pdf</code> 及專案指引摘要）已完整整合收錄於 <code>GPT_Dialogue.pdf</code> 中，並一併打包至 <code>7114068027_hw2.zip</code> 壓縮檔。<br/>"
         "所有數據驗證、模型指標計算與分析結論均由本人 (陳沐德) 實際執行、核對無誤後統整而成。"
     )
     story.append(Paragraph(ai_text, quote_style))

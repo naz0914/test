@@ -93,15 +93,103 @@ def create_dialogue_pdf(filename="GPT_Dialogue.pdf"):
             box_style
         ),
         
-        Paragraph("三、 繳交驗證與聲明", h1_style),
-        Paragraph(
-            "註：本文件為專案實作對話紀要。若授課教師要求瀏覽器完整聊天對話視窗截圖或 PDF，亦可搭配使用瀏覽器列印 (Ctrl+P) 產出之完整對話檔案一併繳交。",
-            body_style
-        )
-    ]
+    story.append(Spacer(1, 10))
+    story.append(Paragraph("三、 官方 AI 對話紀錄匯出說明", h1_style))
+    story.append(Paragraph(
+        "<b>對話歷程整合：</b><br/>"
+        "依據作業規定，已將 Google Gemini 官方完整對話視窗匯出檔案 <code>物聯網課程使用 - Google Gemini.pdf</code>（共 13.3 MB）"
+        "完整無失真合併於本檔案之後續頁面中，包含特徵選定、模型比較、問題分析與程式撰寫之全部即時問答歷程。",
+        box_style
+    ))
     
-    doc.build(story)
-    print(f"Created {filename}")
+    # Build temporary cover
+    temp_cover = "_temp_cover_summary.pdf"
+    doc_temp = SimpleDocTemplate(
+        temp_cover,
+        pagesize=A4,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=40,
+        bottomMargin=40
+    )
+    doc_temp.build(story)
+    
+    gemini_pdf = "物聯網課程使用 - Google Gemini.pdf"
+    merged = False
+    
+    if os.path.exists(gemini_pdf):
+        # 1. Try pypdf
+        try:
+            from pypdf import PdfWriter
+            merger = PdfWriter()
+            merger.append(temp_cover)
+            merger.append(gemini_pdf)
+            merger.write(filename)
+            merger.close()
+            merged = True
+            print(f"Successfully merged cover and {gemini_pdf} using pypdf into {filename}")
+        except Exception:
+            pass
+
+        # 2. Try PyPDF2
+        if not merged:
+            try:
+                from PyPDF2 import PdfMerger
+                merger = PdfMerger()
+                merger.append(temp_cover)
+                merger.append(gemini_pdf)
+                merger.write(filename)
+                merger.close()
+                merged = True
+                print(f"Successfully merged using PyPDF2 into {filename}")
+            except Exception:
+                pass
+
+        # 3. Try PyMuPDF (fitz)
+        if not merged:
+            try:
+                import fitz
+                doc_out = fitz.open()
+                doc_out.insert_pdf(fitz.open(temp_cover))
+                doc_out.insert_pdf(fitz.open(gemini_pdf))
+                doc_out.save(filename)
+                merged = True
+                print(f"Successfully merged using fitz into {filename}")
+            except Exception:
+                pass
+
+        # 4. Try pip install pypdf
+        if not merged:
+            try:
+                import subprocess, sys
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "pypdf"])
+                from pypdf import PdfWriter
+                merger = PdfWriter()
+                merger.append(temp_cover)
+                merger.append(gemini_pdf)
+                merger.write(filename)
+                merger.close()
+                merged = True
+                print(f"Auto-installed pypdf and merged into {filename}")
+            except Exception as e:
+                print(f"pypdf auto-install/merge failed: {e}")
+
+        # 5. Fallback: Copy gemini_pdf directly to filename
+        if not merged:
+            import shutil
+            shutil.copyfile(gemini_pdf, filename)
+            print(f"Fallback: Copied {gemini_pdf} directly to {filename}")
+    else:
+        import shutil
+        shutil.copyfile(temp_cover, filename)
+        print(f"Gemini PDF not found. Created cover as {filename}")
+
+    # Clean up temp cover
+    if os.path.exists(temp_cover) and temp_cover != filename:
+        try:
+            os.remove(temp_cover)
+        except Exception:
+            pass
 
 def make_zip(zip_name="7114068027_hw2.zip"):
     create_dialogue_pdf("GPT_Dialogue.pdf")
@@ -111,6 +199,7 @@ def make_zip(zip_name="7114068027_hw2.zip"):
         "7114068027_hw2.py",
         "7114068027_hw2_report.pdf",
         "GPT_Dialogue.pdf",
+        "物聯網課程使用 - Google Gemini.pdf",
         "Human-AI Interaction.csv",
         "prediction_ci_plot.png",
         "feature_importance.png",

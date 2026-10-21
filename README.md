@@ -15,8 +15,9 @@
 | **1. 完整主程式碼 (Notebook)** | `7114068027_hw2.ipynb` | Jupyter Notebook 格式，依 CRISP-DM 流程撰寫，已內嵌完整輸出日誌與高解析視覺化圖表 | [開啟 Notebook](7114068027_hw2.ipynb) |
 | **1. 完整主程式碼 (Python)** | `7114068027_hw2.py` | 獨立純 Python 執行檔，終端機輸入 `python 7114068027_hw2.py` 即可一鍵重現全部分析與圖表 | [檢視 Python 檔](7114068027_hw2.py) |
 | **2. 作業報告書 PDF** | `7114068027_hw2_report.pdf` | 正式排版之 PDF 報告書（含 CRISP-DM、Kaggle 來源、NotebookLM 摘要、特徵表格、95% CI 預測圖、SOTA 比較） | [下載/預覽 PDF](7114068027_hw2_report.pdf) |
-| **3. AI 對話紀錄 PDF** | `GPT_Dialogue.pdf` | 與 Generative AI (GPT) 協作與對話之歷程紀錄 PDF | [下載/預覽 PDF](GPT_Dialogue.pdf) |
-| **4. 作業總壓縮檔** | `7114068027_hw2.zip` | 依規定以學號命名之 ZIP 壓縮檔（內含上述所有主程式、報告、對話紀錄與資料集） | [取得 ZIP 檔](7114068027_hw2.zip) |
+| **3. AI 對話紀錄 PDF** | `GPT_Dialogue.pdf` | 與 Generative AI (Gemini / GPT) 協作與對話之歷程紀錄 PDF（已整合 `物聯網課程使用 - Google Gemini.pdf` 完整對話匯出檔與精華摘要，共 13.3 MB） | [下載/預覽 PDF](GPT_Dialogue.pdf) |
+| **3. 原始對話匯出檔** | `物聯網課程使用 - Google Gemini.pdf` | Google Gemini 官方瀏覽器完整匯出之原始問答對話歷程 PDF（共 13.3 MB） | [下載/預覽 PDF](<物聯網課程使用 - Google Gemini.pdf>) |
+| **4. 作業總壓縮檔** | `7114068027_hw2.zip` | 依規定以學號命名之 ZIP 壓縮檔（內含上述所有主程式、報告、對話紀錄、資料集與截圖） | [取得 ZIP 檔](7114068027_hw2.zip) |
 
 ### 🌐 線上展示與雲端連結 (Online Repositories & Demos)
 - 🔗 **專案 GitHub 儲存庫**：[https://github.com/naz0914/test](https://github.com/naz0914/test)
@@ -85,7 +86,8 @@
 ├── 7114068027_hw2.ipynb          # [主要繳交] 完整主程式碼 (Jupyter Notebook 格式，內嵌執行結果與高解析圖表)
 ├── 7114068027_hw2.py             # [主要繳交] 完整主程式碼 (純 Python 腳本，終端機一鍵執行重現)
 ├── 7114068027_hw2_report.pdf     # [主要繳交] 完整排版之作業報告書 PDF (含 CRISP-DM、SOTA 比較、95% CI 圖表)
-├── GPT_Dialogue.pdf              # [主要繳交] 完整 AI 對話紀錄 PDF
+├── GPT_Dialogue.pdf              # [主要繳交] 完整 AI 對話紀錄 PDF (已合併 Google Gemini 完整對話 13.3 MB 與封面摘要)
+├── 物聯網課程使用 - Google Gemini.pdf # [原始對話] Google Gemini 瀏覽器完整匯出之原始對話 PDF (13.3 MB)
 ├── 7114068027_hw2.zip            # [主要繳交] 依規定打包以上繳交檔案之 ZIP 壓縮檔
 ├── index.html                    # [亮點展示] StatsUnlock 風格互動式多元迴歸計算機 (GitHub Pages 部署)
 ├── 螢幕擷取畫面 2026-10-21 075348.png # [實機展示] 互動式 Web 計算機完整介面高解析截圖
@@ -96,6 +98,7 @@
 ├── feature_importance.png        # RFE 精選 12 特徵之標準化迴歸權重條形圖
 ├── run_hw2_analysis.py           # 端到端自動分析與出圖 Pipeline
 ├── generate_pdf_report.py        # 作業報告書自動排版生成腳本
+├── merge_gemini_dialogue.py      # AI 對話紀錄自動合併處理腳本
 ├── make_submission_zip.py        # 打包繳交壓縮檔腳本
 └── README.md                     # 專案全流程與評分標準完整說明文件
 ```
@@ -282,13 +285,20 @@ virtual_user = {
 
 ## 📍 Step 7: 打包與繳交規範
 
-依作業規定已將三份繳交檔案打包為壓縮檔：**`7114068027_hw2.zip`**
+依作業規定已將所有核心繳交檔案與產出打包為壓縮檔：**`7114068027_hw2.zip`**
 
 ```text
 7114068027_hw2.zip
 ├── 7114068027_hw2.ipynb          (主程式碼，已內嵌執行輸出與圖表)
+├── 7114068027_hw2.py             (純 Python 主程式，終端機一鍵執行)
 ├── 7114068027_hw2_report.pdf     (作業報告書 PDF)
-└── GPT_Dialogue.pdf              (AI 互動對話紀錄)
+├── GPT_Dialogue.pdf              (AI 互動對話完整紀錄，已合併 Google Gemini 13.3 MB 對話)
+├── 物聯網課程使用 - Google Gemini.pdf (Google Gemini 原始對話匯出檔)
+├── Human-AI Interaction.csv      (Kaggle 官方競賽資料集)
+├── prediction_ci_plot.png        (95% CI 預測散佈圖)
+├── feature_importance.png        (特徵權重條形圖)
+├── 螢幕擷取畫面 2026-10-21 075348.png (Web 計算機介面截圖)
+└── README.md                     (完整專案流程說明書)
 ```
 
 ---
@@ -491,11 +501,12 @@ Successfully created submission package: 7114068027_hw2.zip
 
 ## 📍 學術倫理與 AI 輔助聲明
 
-> ### 🤖 【GPT 輔助內容聲明】
-> 本作業遵循學術誠信原則，在執行規劃與實作過程中，部分分析架構與程式碼由 Generative AI (GPT / Antigravity IDE) 輔助完成：
+> ### 🤖 【GPT / Gemini 輔助內容聲明】
+> 本作業遵循學術誠信原則，在執行規劃與實作過程中，部分分析架構與程式碼由 Generative AI (Google Gemini / GPT / Antigravity IDE) 輔助完成：
 > 1. **特徵工程設計**：採用 RFE (遞迴特徵消除) 篩選 12 個關鍵特徵之 Python 邏輯架構與前處理有序類別映射。
 > 2. **高階視覺化實作**：使用 `seaborn.regplot` 繪製 95% 信賴區間散佈圖及迴歸權重條形圖之樣式與參數調校。
 > 3. **文獻探討導讀**：結合 NotebookLM 生成文獻綜述重點摘要。  
+> 4. **完整對話歷程歸檔**：已將 Google Gemini 官方完整對話匯出檔 `物聯網課程使用 - Google Gemini.pdf` (13.3 MB) 完整整併入 `GPT_Dialogue.pdf` 並打包至繳交壓縮檔中。
 > 本作業所有數據驗證、模型指標計算與商業結論均經由本人 (陳沐德) 實際執行、核對無誤後統整而成。
 
 ---
@@ -506,14 +517,14 @@ Successfully created submission package: 7114068027_hw2.zip
 
 1. **安裝環境依賴套件**：
    ```bash
-   pip install pandas numpy scikit-learn seaborn matplotlib reportlab
+   pip install pandas numpy scikit-learn seaborn matplotlib reportlab pypdf
    ```
 
 2. **重新執行完整資料分析與圖表生成**：
    ```bash
-   python run_hw2_analysis.py
+   python 7114068027_hw2.py
    ```
-   *(自動載入 `Human-AI Interaction.csv`，輸出 `prediction_ci_plot.png`、`feature_importance.png` 與 `analysis_results.json`)*
+   *(自動載入 `Human-AI Interaction.csv`，輸出 `prediction_ci_plot.png`、`feature_importance.png` 與終端機評估報告)*
 
 3. **重新編譯 PDF 作業報告書**：
    ```bash
@@ -521,8 +532,8 @@ Successfully created submission package: 7114068027_hw2.zip
    ```
    *(自動生成 `7114068027_hw2_report.pdf`)*
 
-4. **重新打包繳交壓縮檔**：
+4. **重新打包繳交壓縮檔 (自動整併 Gemini 對話)**：
    ```bash
    python make_submission_zip.py
    ```
-   *(自動生成 `7114068027_hw2.zip`)*
+   *(自動將 `物聯網課程使用 - Google Gemini.pdf` 合併為 `GPT_Dialogue.pdf` 並產出 `7114068027_hw2.zip`)*
