@@ -24,6 +24,7 @@
 - 📊 **Kaggle 官方原始資料集**：[Kaggle - Human-AI Interaction Dataset](https://www.kaggle.com/datasets/ahmedashrafpro/human-ai-interaction)
 
 ### 📊 專案關鍵視覺化與分析產出 (Analysis Artifacts)
+- 🖥️ **互動式 Web 預測計算機介面截圖**：[`螢幕擷取畫面 2026-10-21 075348.png`](螢幕擷取畫面%202026-10-21%20075348.png)
 - 📈 **95% 信賴區間回歸預測散佈圖**：[`prediction_ci_plot.png`](prediction_ci_plot.png)
 - 📊 **RFE 精選 12 特徵之標準化影響權重圖**：[`feature_importance.png`](feature_importance.png)
 - 🔢 **模型參數與分佈統計檔**：[`analysis_results.json`](analysis_results.json) / [`model_stats.json`](model_stats.json)
@@ -45,6 +46,12 @@
 
 ### 🌐 專屬互動式多元迴歸計算機 (Interactive Web Calculator)
 本專案已實作兼具現代統計 SaaS 質感的互動網頁（參照 [StatsUnlock](https://statsunlock.com/multiple-linear-regression-calculator/) 視覺風格設計）：
+
+[![Human-AI 信任度多元線性回歸計算機實機畫面](螢幕擷取畫面%202026-10-21%20075348.png)](https://naz0914.github.io/test/)
+
+> 🚀 **[點此直接開啟線上互動式計算機 (GitHub Pages)](https://naz0914.github.io/test/)**  
+> *點擊上方圖片或連結即可開啟即時推論系統！支援 12 項關鍵特徵滑桿微秒級聯動、95% 信賴區間動態推估、三大授權分級處置與診斷報告一鍵匯出。*
+
 * **即時雙向聯動**：12 個關鍵特徵滑桿與數值框即時連動，微秒級計算 Z-Score 與標準化推估。
 * **95% 統計信賴區間**：動態計算信任分數估計區間 ($[\hat{y} \pm 1.96 \times SE]$)。
 * **三大授權分級 (Automation Tiers)**：自動依據預測分數動態判斷全自動化／人機雙審協同／保守防護等級。
@@ -81,6 +88,7 @@
 ├── GPT_Dialogue.pdf              # [主要繳交] 完整 AI 對話紀錄 PDF
 ├── 7114068027_hw2.zip            # [主要繳交] 依規定打包以上繳交檔案之 ZIP 壓縮檔
 ├── index.html                    # [亮點展示] StatsUnlock 風格互動式多元迴歸計算機 (GitHub Pages 部署)
+├── 螢幕擷取畫面 2026-10-21 075348.png # [實機展示] 互動式 Web 計算機完整介面高解析截圖
 ├── .github/workflows/
 │   └── deploy-pages.yml          # 自動發布至 GitHub Pages 之 CI/CD 工作流程
 ├── Human-AI Interaction.csv      # Kaggle 官方原始資料集 (10,100 筆樣本、21 欄位)
@@ -289,8 +297,10 @@ virtual_user = {
 
 為落實模型落地與成果可視化，本專案參照全球知名統計分析平台 [StatsUnlock (Multiple Linear Regression Calculator)](https://statsunlock.com/multiple-linear-regression-calculator/) 之介面設計與交互邏輯，自主打造了一套高質感的**單頁應用式 (SPA) 多元線性迴歸互動推論儀表板**。
 
-- **線上體驗網址 (GitHub Pages)**：[https://naz0914.github.io/test/](https://naz0914.github.io/test/)
-- **專案原始碼**：[`index.html`](index.html)（免後端環境，全瀏覽器開箱即用）
+[![Human-AI 信任度多元線性回歸計算機操作畫面](螢幕擷取畫面%202026-10-21%20075348.png)](https://naz0914.github.io/test/)
+
+- 🌐 **線上體驗網址 (GitHub Pages)**：[https://naz0914.github.io/test/](https://naz0914.github.io/test/) *(點擊即開，支援手機與桌機 RWD 響應式佈局)*
+- 📄 **專案原始碼**：[`index.html`](index.html)（免後端環境，全瀏覽器開箱即用）
 
 ### 8.1 網頁系統架構與設計概念 (UI/UX Design)
 - **視覺規範 (StatsUnlock Aesthetic)**：採用現代化純白卡片 (`#ffffff`) 與細緻擴散陰影 (`box-shadow`)，背景為護眼淺岩灰 (`#f8fafc`)；搭配科技靛藍 (`#4f46e5`) 作為主按鈕與焦點，正向增益特徵採用翡翠綠標籤 (`#10b981`)，負向阻力採用珊瑚紅警示 (`#ef4444`)。
