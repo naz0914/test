@@ -43,7 +43,7 @@
 - 🏢 **加分項範例資料集**：[50_Startups.csv (Avik Jain 100 Days of ML)](https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv)
 
 ### 📊 專案關鍵視覺化與分析產出 (Analysis Artifacts)
-- 🖥️ **互動式 Web 預測計算機介面截圖**：[`螢幕擷取畫面 2026-10-21 075348.png`](螢幕擷取畫面%202026-10-21%20075348.png)
+- 🖥️ **互動式 Web 預測計算機介面截圖**：[`螢幕擷取畫面 2026-10-23 170017.png`](螢幕擷取畫面%202026-10-23%20170017.png)
 - 📈 **95% 信賴區間回歸預測散佈圖**：[`prediction_ci_plot.png`](prediction_ci_plot.png)
 - 📊 **RFE 精選 12 特徵之標準化影響權重圖**：[`feature_importance.png`](feature_importance.png)
 - 🔢 **模型參數與分佈統計檔**：[`analysis_results.json`](analysis_results.json) / [`model_stats.json`](model_stats.json) / [`datasets_config.json`](datasets_config.json)
@@ -56,7 +56,7 @@
 ### 🌐 專屬互動式多元迴歸計算機 (Interactive Web Calculator)
 本專案已實作兼具現代統計 SaaS 質感的互動網頁（參照 [StatsUnlock](https://statsunlock.com/multiple-linear-regression-calculator/) 視覺風格設計）：
 
-[![多元線性回歸計算機實機畫面](螢幕擷取畫面%202026-10-21%20075348.png)](https://naz0914.github.io/test/)
+[![多元線性回歸計算機實機畫面](螢幕擷取畫面%202026-10-23%20170017.png)](https://naz0914.github.io/test/)
 
 > 🚀 **[點此直接開啟線上互動式計算機 (GitHub Pages)](https://naz0914.github.io/test/)**  
 > *點擊上方圖片或連結即可開啟即時推論系統！支援雙問題下拉切換、任意 CSV 網址即時迴歸分析、12 項關鍵特徵滑桿微秒級聯動、95% 信賴區間動態推估、三大處置分級與診斷報告一鍵匯出。*
@@ -100,7 +100,7 @@
 ├── 物聯網課程使用 - Google Gemini.pdf # [原始對話] Google Gemini 瀏覽器完整匯出之原始對話 PDF (13.3 MB)
 ├── 7114068027_hw2.zip            # [主要繳交] 依規定打包以上繳交檔案之 ZIP 壓縮檔
 ├── index.html                    # [亮點展示] StatsUnlock 風格互動式多元迴歸計算機 (GitHub Pages 部署)
-├── 螢幕擷取畫面 2026-10-21 075348.png # [實機展示] 互動式 Web 計算機完整介面高解析截圖
+├── 螢幕擷取畫面 2026-10-23 170017.png # [實機展示] 互動式 Web 計算機完整介面高解析截圖 (含加分項下拉與任意資料集)
 ├── .github/workflows/
 │   └── deploy-pages.yml          # 自動發布至 GitHub Pages 之 CI/CD 工作流程
 ├── Human-AI Interaction.csv      # Kaggle 官方原始資料集 (10,100 筆樣本、21 欄位)
@@ -307,7 +307,7 @@ virtual_user = {
 ├── Human-AI Interaction.csv      (Kaggle 官方競賽資料集)
 ├── prediction_ci_plot.png        (95% CI 預測散佈圖)
 ├── feature_importance.png        (特徵權重條形圖)
-├── 螢幕擷取畫面 2026-10-21 075348.png (Web 計算機介面截圖)
+├── 螢幕擷取畫面 2026-10-23 170017.png (Web 計算機介面最新截圖，含加分項 1 與加分項 2)
 └── README.md                     (完整專案流程說明書)
 ```
 
@@ -317,7 +317,7 @@ virtual_user = {
 
 為落實模型落地與成果可視化，本專案參照全球知名統計分析平台 [StatsUnlock (Multiple Linear Regression Calculator)](https://statsunlock.com/multiple-linear-regression-calculator/) 之介面設計與交互邏輯，自主打造了一套高質感的**單頁應用式 (SPA) 多元線性迴歸互動推論儀表板**。
 
-[![Human-AI 信任度多元線性回歸計算機操作畫面](螢幕擷取畫面%202026-10-21%20075348.png)](https://naz0914.github.io/test/)
+[![Human-AI 信任度多元線性回歸計算機操作畫面](螢幕擷取畫面%202026-10-23%20170017.png)](https://naz0914.github.io/test/)
 
 - 🌐 **線上體驗網址 (GitHub Pages)**：[https://naz0914.github.io/test/](https://naz0914.github.io/test/) *(點擊即開，支援手機與桌機 RWD 響應式佈局)*
 - 📄 **專案原始碼**：[`index.html`](index.html)（免後端環境，全瀏覽器開箱即用）

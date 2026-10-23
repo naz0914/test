@@ -208,7 +208,7 @@ def make_zip(zip_name="7114068027_hw2.zip"):
         "index.html",
         "prediction_ci_plot.png",
         "feature_importance.png",
-        "螢幕擷取畫面 2026-10-21 075348.png",
+        "螢幕擷取畫面 2026-10-23 170017.png",
         "README.md"
     ]
     
