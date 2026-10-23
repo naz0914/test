@@ -13,7 +13,6 @@
 """
 
 import os
-import json
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -89,7 +88,8 @@ def run_problem_1_human_ai():
     rfe = RFE(estimator=LinearRegression(), n_features_to_select=12, step=1)
     rfe.fit(X_train_scaled, y_train)
 
-    selected_features = [feature_cols[i] for i, val in enumerate(rfe.support_) if val]
+    rfe_support = getattr(rfe, 'support_', [True] * len(feature_cols))
+    selected_features = [feature_cols[i] for i, val in enumerate(rfe_support) if val]
     print(f"[Step 4] RFE 精選 12 個關鍵特徵: {selected_features}")
 
     X_train_sel = rfe.transform(X_train_scaled)
@@ -101,16 +101,17 @@ def run_problem_1_human_ai():
     y_pred = model.predict(X_test_sel)
 
     # 評估指標
-    mse = mean_squared_error(y_test, y_pred)
-    rmse = np.sqrt(mse)
-    mae = mean_absolute_error(y_test, y_pred)
-    r2 = r2_score(y_test, y_pred)
+    mse = float(mean_squared_error(y_test, y_pred))
+    rmse = float(np.sqrt(mse))
+    mae = float(mean_absolute_error(y_test, y_pred))
+    r2 = float(r2_score(y_test, y_pred))
+    intercept_val = float(np.ravel(model.intercept_)[0])
 
     print("\n[Step 5] 模型評估指標:")
     print(f"  - 決定係數 R² : {r2:.4f} ({r2*100:.2f}%)")
     print(f"  - RMSE 均方根誤差: {rmse:.4f} 分")
     print(f"  - MAE 平均絕對誤差: {mae:.4f} 分")
-    print(f"  - 基準截距 Intercept: {model.intercept_:.4f}")
+    print(f"  - 基準截距 Intercept: {intercept_val:.4f}")
 
     # 繪製圖 1: 預測值 vs 實際值 (含 95% 信賴區間帶)
     plt.figure(figsize=(9, 7), dpi=300)
@@ -120,7 +121,8 @@ def run_problem_1_human_ai():
         line_kws={'color': '#e63946', 'linewidth': 2.5, 'label': f'Fit Line (R² = {r2:.3f})'},
         ci=95
     )
-    min_v, max_v = min(y_test.min(), y_pred.min()), max(y_test.max(), y_pred.max())
+    min_v = float(min(float(y_test.min()), float(y_pred.min())))
+    max_v = float(max(float(y_test.max()), float(y_pred.max())))
     plt.plot([min_v, max_v], [min_v, max_v], '--', color='#6c757d', linewidth=1.5, label='Ideal Reference (y = x)')
     plt.title('Problem 1: Actual vs Predicted Trust Score with 95% Confidence Interval', fontsize=13, fontweight='bold', pad=15)
     plt.xlabel('Actual Trust Score (實際信任分數: latent_trust_score)', fontsize=11, fontweight='bold')
@@ -132,7 +134,8 @@ def run_problem_1_human_ai():
     print("-> 成功輸出 95% 信賴區間圖: prediction_ci_plot.png")
 
     # 繪製圖 2: 標準化係數影響權重圖
-    coef_df = pd.DataFrame({'Feature': selected_features, 'Coefficient': model.coef_}).sort_values(by='Coefficient')
+    coef_vals = np.ravel(model.coef_)
+    coef_df = pd.DataFrame({'Feature': selected_features, 'Coefficient': coef_vals}).sort_values(by='Coefficient')
     plt.figure(figsize=(9, 6), dpi=300)
     bar_colors = ['#e63946' if c < 0 else '#2a9d8f' for c in coef_df['Coefficient']]
     plt.barh(coef_df['Feature'], coef_df['Coefficient'], color=bar_colors, edgecolor='none', height=0.65)
@@ -144,7 +147,23 @@ def run_problem_1_human_ai():
     plt.close()
     print("-> 成功輸出特徵權重條形圖: feature_importance.png")
 
-    # 模擬上線推論
+    # [Step 6] 網路上主流解法實證比較 (多元回歸 vs 正則化 vs 隨機森林)
+    print("\n[Step 6] 網路上主流解法實證比較 (多元回歸 vs 正則化 vs 隨機森林):")
+    ridge = Ridge(alpha=1.0).fit(X_train_sel, y_train)
+    ridge_r2 = float(r2_score(y_test, ridge.predict(X_test_sel)))
+
+    lasso = Lasso(alpha=0.01).fit(X_train_sel, y_train)
+    lasso_r2 = float(r2_score(y_test, lasso.predict(X_test_sel)))
+
+    rf = RandomForestRegressor(n_estimators=100, max_depth=8, random_state=42).fit(X_train_sel, y_train)
+    rf_r2 = float(r2_score(y_test, rf.predict(X_test_sel)))
+
+    print(f"  1. 多元線性回歸 (OLS + RFE)  : R² = {r2:.4f}, RMSE = {rmse:.4f}")
+    print(f"  2. Ridge 嶺回歸 (L2 正則化)   : R² = {ridge_r2:.4f}")
+    print(f"  3. Lasso 迴歸 (L1 正則化)   : R² = {lasso_r2:.4f}")
+    print(f"  4. 隨機森林迴歸 (Random Forest) : R² = {rf_r2:.4f}")
+
+    # [Step 7] 模擬上線推論驗證
     user_test = pd.DataFrame([{
         'age': 32.0, 'education_level': 2, 'technical_experience': 8.5,
         'cognitive_load': 0.35, 'prior_ai_exposure': 3, 'model_accuracy': 0.94,
@@ -196,7 +215,8 @@ def run_problem_2_flood_prediction():
     rfe = RFE(estimator=LinearRegression(), n_features_to_select=12, step=1)
     rfe.fit(X_train_scaled, y_train)
 
-    selected_features = [feature_cols[i] for i, val in enumerate(rfe.support_) if val]
+    rfe_support = getattr(rfe, 'support_', [True] * len(feature_cols))
+    selected_features = [feature_cols[i] for i, val in enumerate(rfe_support) if val]
     print(f"[Step 4] RFE 精選 12 個水文防洪關鍵特徵: {selected_features}")
 
     X_train_sel = rfe.transform(X_train_scaled)
@@ -206,16 +226,17 @@ def run_problem_2_flood_prediction():
     model.fit(X_train_sel, y_train)
     y_pred = model.predict(X_test_sel)
 
-    mse = mean_squared_error(y_test, y_pred)
-    rmse = np.sqrt(mse)
-    mae = mean_absolute_error(y_test, y_pred)
-    r2 = r2_score(y_test, y_pred)
+    mse = float(mean_squared_error(y_test, y_pred))
+    rmse = float(np.sqrt(mse))
+    mae = float(mean_absolute_error(y_test, y_pred))
+    r2 = float(r2_score(y_test, y_pred))
+    intercept_val = float(np.ravel(model.intercept_)[0])
 
     print("\n[Step 5] 洪澇機率回歸評估指標:")
     print(f"  - 決定係數 R² : {r2:.4f} ({r2*100:.2f}%)")
     print(f"  - RMSE 均方根誤差: {rmse:.4f} (約 {rmse*100:.2f} 個百分點)")
     print(f"  - MAE 平均絕對誤差: {mae:.4f}")
-    print(f"  - 截距 Intercept : {model.intercept_:.4f}")
+    print(f"  - 截距 Intercept : {intercept_val:.4f}")
 
 
 # =====================================================================
@@ -242,10 +263,11 @@ def run_bonus_arbitrary_dataset(url_or_path="50_Startups.csv", target_col="Profi
 
     # 自動處理類別變數 (One-Hot Dummy Encoding)
     df_encoded = pd.get_dummies(df, drop_first=True)
-    
+
     if target_col not in df_encoded.columns:
-        # 自動選擇最後一個數值欄位作為 target
-        target_col = df_encoded.select_dtypes(include=[np.number]).columns[-1]
+        numeric_cols = df_encoded.select_dtypes(include="number").columns
+        if len(numeric_cols) > 0:
+            target_col = str(numeric_cols[-1])
 
     print(f"選定預測目標變數 Target: {target_col}")
 
@@ -258,18 +280,21 @@ def run_bonus_arbitrary_dataset(url_or_path="50_Startups.csv", target_col="Profi
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 
-    r2 = r2_score(y_test, y_pred)
-    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-    mae = mean_absolute_error(y_test, y_pred)
+    r2 = float(r2_score(y_test, y_pred))
+    rmse = float(np.sqrt(mean_squared_error(y_test, y_pred)))
+    mae = float(mean_absolute_error(y_test, y_pred))
+    intercept_val = float(np.ravel(model.intercept_)[0])
 
     print("\n多元線性回歸 OLS 分析結果:")
     print(f"  - 決定係數 R² : {r2:.4f} ({r2*100:.2f}%)")
     print(f"  - RMSE 均方根誤差: {rmse:.2f}")
     print(f"  - MAE 平均絕對誤差: {mae:.2f}")
-    print(f"  - 截距項 Intercept: {model.intercept_:.2f}")
+    print(f"  - 截距項 Intercept: {intercept_val:.2f}")
+
+    coef_vals = np.ravel(model.coef_)
     print("\n自變數回歸權重係數 (Beta Coefficients):")
-    for col, coef in zip(X.columns, model.coef_):
-        print(f"  • {col:25s}: {coef:12.4f}")
+    for col, coef in zip(X.columns, coef_vals):
+        print(f"  • {col:25s}: {float(coef):12.4f}")
 
 
 def main():
