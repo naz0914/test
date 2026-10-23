@@ -1,7 +1,23 @@
 # 巨量資料分析與機器學習 - 作業二 (HW2)
 
 > 🎓 **學生資訊**：陳沐德（學號：`7114068027`）  
-> 📌 **課程專案題目**：Human-AI Interaction 人類與 AI 互動信任度預測與特徵選擇
+> 📌 **課程專案題目**：多元線性回歸 (Multiple Linear Regression) 完整分析與即時推論系統（含 2 種 Kaggle 題目與自訂資料集）
+
+---
+
+## 🏆 作業評分標準與加分項目達成對應清單 (Bonus Features Checklist)
+
+本專案已**100% 達成課程基本規範與全部加分項目 (+3分)**：
+
+| 評分項目 | 滿分/加分 | 實作成果與位置 | 達成狀態 |
+| :--- | :---: | :--- | :---: |
+| **加分項 1** | **+1 分** | **下拉視窗呈現兩種 Problem**：<br>• 問題一：`Human-AI Interaction` 人類與 AI 信任度預測 (20 Features, Target: `latent_trust_score`)<br>• 問題二：`Predict the Flood` 洪澇災害發生機率預測 (20 Features, Target: `FloodProbability`)<br>• 位於網頁頂部下拉選單，一鍵連動切換滑桿、方程式、ANOVA 與圖表 | **已達成 ✓** |
+| **加分項 2** | **+2 分** | **可任意輸入 Dataset** (如 `https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv`)：<br>• 支援輸入任意公開 CSV 網址、一鍵快捷範例載入、或本機 CSV 拖曳上傳<br>• 瀏覽器純前端高精度反矩陣高斯-馬可夫引擎即時求解 OLS、R²、Adj R²、RMSE、95% CI/PI，並動態產生互動滑桿推論與散佈圖 | **已達成 ✓** |
+| **資料來源規範** | 必備 | Kaggle 公開資料集具有 14~39 個特徵 (13 < 特徵數 < 40)，兩題目皆為 20 個原始特徵，明確標示來源與連結 | **已達成 ✓** |
+| **分析與評估任務** | 必備 | 執行 RFE 遞迴特徵選擇、多元線性回歸、MSE、RMSE、MAE、R²、五大回歸假設檢驗、95% 信賴區間 (CI) 與預測區間 (PI) 圖 | **已達成 ✓** |
+| **CRISP-DM 流程** | 必備 | 完整遵循 Business / Data Understanding / Data Prep / Modeling / Evaluation / Deployment 六大階段 | **已達成 ✓** |
+| **AI 協助規範** | 必備 | NotebookLM 深度文獻摘要 (268 字，超過 100 字規範) + GPT/Gemini 完整對話紀錄匯出 PDF (`GPT_Dialogue.pdf`) | **已達成 ✓** |
+| **繳交成果** | 必備 | GitHub 儲存庫與 GitHub Pages 網頁 (`index.html`)、Python 腳本、Notebook、報告書與 ZIP 壓縮檔 | **已達成 ✓** |
 
 ---
 
@@ -12,8 +28,8 @@
 ### 📦 核心繳交檔案 (Required Deliverables)
 | 繳交項目 | 檔案名稱 / 規格 | 說明與內容 | 快速存取連結 |
 | :--- | :--- | :--- | :---: |
-| **1. 完整主程式碼 (Notebook)** | `7114068027_hw2.ipynb` | Jupyter Notebook 格式，依 CRISP-DM 流程撰寫，已內嵌完整輸出日誌與高解析視覺化圖表 | [開啟 Notebook](7114068027_hw2.ipynb) |
-| **1. 完整主程式碼 (Python)** | `7114068027_hw2.py` | 獨立純 Python 執行檔，終端機輸入 `python 7114068027_hw2.py` 即可一鍵重現全部分析與圖表 | [檢視 Python 檔](7114068027_hw2.py) |
+| **1. 完整主程式碼 (Notebook)** | `7114068027_hw2.ipynb` | Jupyter Notebook 格式，依 CRISP-DM 流程撰寫，已內嵌雙問題與自訂資料集分析 | [開啟 Notebook](7114068027_hw2.ipynb) |
+| **1. 完整主程式碼 (Python)** | `7114068027_hw2.py` | 獨立純 Python 執行檔，終端機輸入 `python 7114068027_hw2.py` 即可一鍵重現全部分析、雙問題與 50_Startups | [檢視 Python 檔](7114068027_hw2.py) |
 | **2. 作業報告書 PDF** | `7114068027_hw2_report.pdf` | 正式排版之 PDF 報告書（含 CRISP-DM、Kaggle 來源、NotebookLM 摘要、特徵表格、95% CI 預測圖、SOTA 比較） | [下載/預覽 PDF](7114068027_hw2_report.pdf) |
 | **3. AI 對話紀錄 PDF** | `GPT_Dialogue.pdf` | 與 Generative AI (Gemini / GPT) 協作與對話之歷程紀錄 PDF（已整合 `物聯網課程使用 - Google Gemini.pdf` 完整對話匯出檔與精華摘要，共 13.3 MB） | [下載/預覽 PDF](GPT_Dialogue.pdf) |
 | **3. 原始對話匯出檔** | `物聯網課程使用 - Google Gemini.pdf` | Google Gemini 官方瀏覽器完整匯出之原始問答對話歷程 PDF（共 13.3 MB） | [下載/預覽 PDF](<物聯網課程使用 - Google Gemini.pdf>) |
@@ -22,42 +38,36 @@
 ### 🌐 線上展示與雲端連結 (Online Repositories & Demos)
 - 🔗 **專案 GitHub 儲存庫**：[https://github.com/naz0914/test](https://github.com/naz0914/test)
 - 🌐 **StatsUnlock 風格互動式 Web 預測計算機 (GitHub Pages)**：[https://naz0914.github.io/test/](https://naz0914.github.io/test/)
-- 📊 **Kaggle 官方原始資料集**：[Kaggle - Human-AI Interaction Dataset](https://www.kaggle.com/datasets/ahmedashrafpro/human-ai-interaction)
+- 📊 **Kaggle 問題一原始資料集**：[Kaggle - Human-AI Interaction Dataset](https://www.kaggle.com/datasets/ahmedashrafpro/human-ai-interaction)
+- 🌊 **Kaggle 問題二原始資料集**：[Kaggle - Predict the Flood (Playground Series s4e5)](https://www.kaggle.com/competitions/playground-series-s4e5)
+- 🏢 **加分項範例資料集**：[50_Startups.csv (Avik Jain 100 Days of ML)](https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv)
 
 ### 📊 專案關鍵視覺化與分析產出 (Analysis Artifacts)
 - 🖥️ **互動式 Web 預測計算機介面截圖**：[`螢幕擷取畫面 2026-10-21 075348.png`](螢幕擷取畫面%202026-10-21%20075348.png)
 - 📈 **95% 信賴區間回歸預測散佈圖**：[`prediction_ci_plot.png`](prediction_ci_plot.png)
 - 📊 **RFE 精選 12 特徵之標準化影響權重圖**：[`feature_importance.png`](feature_importance.png)
-- 🔢 **模型參數與分佈統計檔**：[`analysis_results.json`](analysis_results.json) / [`model_stats.json`](model_stats.json)
-- 📄 **Kaggle 官方實體資料集 (10,100 筆)**：[`Human-AI Interaction.csv`](Human-AI Interaction.csv)
-
----
-
-## 專案題目：Human-AI Interaction 人類與 AI 互動信任度預測與特徵選擇
-
-- **學生姓名**：陳沐德
-- **學生學號**：7114068027
-- **開課系所**：巨量資料分析與機器學習課程
-- **資料集來源**：[Kaggle - Human-AI Interaction Dataset](https://www.kaggle.com/datasets/ahmedashrafpro/human-ai-interaction)
-- **實體資料檔案**：`Human-AI Interaction.csv`（Kaggle 官方競賽正式資料集，10,100 筆樣本）
-- **程式碼儲存庫**：[https://github.com/naz0914/test](https://github.com/naz0914/test)
-- **🌐 互動式 Web 線上體驗 (GitHub Pages)**：[https://naz0914.github.io/test/](https://naz0914.github.io/test/)（StatsUnlock 風格即時迴歸推論計算機）
+- 🔢 **模型參數與分佈統計檔**：[`analysis_results.json`](analysis_results.json) / [`model_stats.json`](model_stats.json) / [`datasets_config.json`](datasets_config.json)
+- 📄 **Kaggle 實體資料集一 (10,100 筆)**：[`Human-AI Interaction.csv`](Human-AI Interaction.csv)
+- 🌊 **Kaggle 實體資料集二 (10,000 筆)**：[`flood_prediction.csv`](flood_prediction.csv)
+- 🏢 **加分項實體資料集 (50 筆)**：[`50_Startups.csv`](50_Startups.csv)
 
 ---
 
 ### 🌐 專屬互動式多元迴歸計算機 (Interactive Web Calculator)
 本專案已實作兼具現代統計 SaaS 質感的互動網頁（參照 [StatsUnlock](https://statsunlock.com/multiple-linear-regression-calculator/) 視覺風格設計）：
 
-[![Human-AI 信任度多元線性回歸計算機實機畫面](螢幕擷取畫面%202026-10-21%20075348.png)](https://naz0914.github.io/test/)
+[![多元線性回歸計算機實機畫面](螢幕擷取畫面%202026-10-21%20075348.png)](https://naz0914.github.io/test/)
 
 > 🚀 **[點此直接開啟線上互動式計算機 (GitHub Pages)](https://naz0914.github.io/test/)**  
-> *點擊上方圖片或連結即可開啟即時推論系統！支援 12 項關鍵特徵滑桿微秒級聯動、95% 信賴區間動態推估、三大授權分級處置與診斷報告一鍵匯出。*
+> *點擊上方圖片或連結即可開啟即時推論系統！支援雙問題下拉切換、任意 CSV 網址即時迴歸分析、12 項關鍵特徵滑桿微秒級聯動、95% 信賴區間動態推估、三大處置分級與診斷報告一鍵匯出。*
 
+* **🌟 加分項 1 (下拉選單呈現兩種 Problem)**：一鍵切換「Human-AI 信任度預測」與「Predict the Flood 洪澇機率預測」，即時聯動更新所有特徵滑桿、方程式與統計表。
+* **🌟 加分項 2 (任意輸入 Dataset)**：直接貼上任何 CSV 網址（預設老師指定的 `50_Startups.csv`）或拖曳本機檔案，前端純 JavaScript 高精度反矩陣高斯-馬可夫引擎即時求解 OLS、R²、95% CI/PI 並繪製散佈圖！
 * **即時雙向聯動**：12 個關鍵特徵滑桿與數值框即時連動，微秒級計算 Z-Score 與標準化推估。
-* **95% 統計信賴區間**：動態計算信任分數估計區間 ($[\hat{y} \pm 1.96 \times SE]$)。
-* **三大授權分級 (Automation Tiers)**：自動依據預測分數動態判斷全自動化／人機雙審協同／保守防護等級。
+* **95% 統計信賴區間 (CI) 與預測區間 (PI)**：動態計算估計區間與單一樣本預測區間 ($[\hat{y} \pm 1.96 \times SE]$)。
+* **三大處置分級 (Automation / Risk Tiers)**：自動依據預測數值動態判斷應對處置防護等級。
 * **Chart.js 動態視覺化**：內建標準化係數正負瀑布圖與信賴區間邊際效應預測曲線。
-* **完整 ANOVA 與迴歸表**：展示 $F=1489.71$ ($p < 0.0001$)、各變數 $t$-統計量與顯著性星號。
+* **完整 ANOVA 與迴歸表**：展示 $F$-統計量 ($p < 0.0001$)、各變數 $t$-統計量與顯著性星號。
 * **線上操作網址**：[https://naz0914.github.io/test/](https://naz0914.github.io/test/)
 
 ---

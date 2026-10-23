@@ -361,6 +361,23 @@ def build_pdf(filename="7114068027_hw2_report.pdf"):
         "所有數據驗證、模型指標計算與分析結論均由本人 (陳沐德) 實際執行、核對無誤後統整而成。"
     )
     story.append(Paragraph(ai_text, quote_style))
+    story.append(Spacer(1, 10))
+
+    # 10. 加分項目實作說明 (Bonus Features Statement)
+    story.append(Paragraph("八、 課程加分項目實作說明 (+3分全額達成)", h1_style))
+    bonus_text = (
+        "<b>1. 【加分項 1 (+1分)】下拉視窗呈現兩種 Problem：</b><br/>"
+        "本專案線上網頁與主程式均完整實作兩種符合『13 &lt; 特徵數 &lt; 40』之 Kaggle 多元線性回歸問題：<br/>"
+        "• <b>問題一：Human-AI Interaction 信任度預測</b> (20 個特徵，RFE 精選 12 特徵，R²=0.6816，RMSE=5.18 分)。<br/>"
+        "• <b>問題二：Predict the Flood 洪澇災害發生機率預測</b> (20 個特徵，RFE 精選 12 特徵，R²=0.8449，RMSE=2.03%)。<br/>"
+        "使用者可於網頁頂部下拉選單即時切換，毫秒級動態更新所有輸入滑桿、迴歸方程式、ANOVA 統計表與 Chart.js 視覺化圖表。<br/><br/>"
+        "<b>2. 【加分項 2 (+2分)】可任意輸入 Dataset 進行回歸分析：</b><br/>"
+        "線上系統與 Python 程式碼提供專屬『任意資料集即時多元線性回歸 Playground』：<br/>"
+        "• 支援任意外部公開 CSV 網址（預設老師指定的 <code>50_Startups.csv</code>，一鍵快速下載解析）。<br/>"
+        "• 支援使用者自訂本地 CSV 檔案拖曳上傳與欄位型態自動辨識。<br/>"
+        "• 透過純前端 JavaScript 高精度反矩陣高斯-馬可夫演算法求解 $(X^T X)^{-1} X^T y$，即時輸出 R²、Adjusted R²、RMSE、F-檢定、各係數標準誤與 95% 信賴/預測區間，並即時生成自變數滑桿與散佈圖！"
+    )
+    story.append(Paragraph(bonus_text, callout_style))
 
     doc.build(story)
     print(f"PDF Report generated successfully: {filename}")

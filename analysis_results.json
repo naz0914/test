@@ -33,7 +33,9 @@
     "mse": 26.8723,
     "rmse": 5.1838,
     "mae": 4.151,
-    "r2": 0.6816
+    "r2": 0.6816,
+    "adj_r2": 0.6812,
+    "f_stat": 1489.71
   },
   "coefficients": {
     "education_level": 0.0844,
@@ -50,5 +52,52 @@
     "domain": 0.1238
   },
   "intercept": 70.4979,
-  "simulated_user_prediction": 93.1
+  "simulated_user_prediction": 93.1,
+  "bonus_features": {
+    "bonus_1_dropdown_problems": {
+      "name": "下拉選單呈現兩種 Problem",
+      "problem1": "Human-AI Interaction (20 Features, R²=0.6816)",
+      "problem2": "Predict the Flood (20 Features, R²=0.8449)"
+    },
+    "bonus_2_arbitrary_dataset": {
+      "name": "可任意輸入 Dataset (支援 URL 如 50_Startups.csv 與上傳)",
+      "sample": "50_Startups.csv (R²=0.9507, RMSE=9137.40)"
+    }
+  },
+  "problem1": {
+    "problem_name": "Human-AI Interaction 信任度多元線性回歸",
+    "dataset_file": "Human-AI Interaction.csv",
+    "target_col": "latent_trust_score",
+    "raw_samples": 10100,
+    "n_samples": 9899,
+    "total_features": 20,
+    "selected_features_count": 12,
+    "metrics": {
+      "mse": 26.8723,
+      "rmse": 5.1838,
+      "mae": 4.151,
+      "r2": 0.6816,
+      "adj_r2": 0.6812,
+      "f_stat": 1489.71
+    },
+    "intercept": 70.4979
+  },
+  "problem2": {
+    "problem_name": "Predict the Flood 洪澇災害風險多元線性回歸",
+    "dataset_file": "flood_prediction.csv",
+    "target_col": "FloodProbability",
+    "raw_samples": 10000,
+    "n_samples": 10000,
+    "total_features": 20,
+    "selected_features_count": 12,
+    "metrics": {
+      "mse": 0.000412,
+      "rmse": 0.0203,
+      "mae": 0.0162,
+      "r2": 0.8449,
+      "adj_r2": 0.8446,
+      "f_stat": 3782.50
+    },
+    "intercept": 0.5042
+  }
 }

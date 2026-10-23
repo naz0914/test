@@ -1,0 +1,410 @@
+{
+  "problems": {
+    "human_ai": {
+      "id": "human_ai",
+      "name": "Human-AI Interaction 人類與 AI 信任度預測",
+      "kaggle_name": "Human-AI Interaction Dataset",
+      "kaggle_url": "https://www.kaggle.com/datasets/ahmedashrafpro/human-ai-interaction",
+      "dataset_file": "Human-AI Interaction.csv",
+      "target_col": "latent_trust_score",
+      "target_name": "潛在信任分數 (latent_trust_score)",
+      "target_unit": "分 (0 ~ 100)",
+      "raw_samples": 10100,
+      "n_samples": 9899,
+      "total_features": 20,
+      "selected_features_count": 12,
+      "r2": 0.6816,
+      "adj_r2": 0.6812,
+      "rmse": 5.1838,
+      "mae": 4.1510,
+      "f_stat": 1489.71,
+      "f_pvalue": 0.0,
+      "intercept": 70.4979,
+      "primary_driver": "trust_history",
+      "primary_driver_name": "累積信任歷史 (Trust History)",
+      "features": {
+        "trust_history": {
+          "name": "累積信任歷史 (Trust History)",
+          "beta": 4.2505,
+          "mean": 0.4982,
+          "std": 0.2849,
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01,
+          "default": 0.50
+        },
+        "feedback_quality": {
+          "name": "反饋品質 (Feedback Quality)",
+          "beta": 2.8357,
+          "mean": 0.4980,
+          "std": 0.2854,
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01,
+          "default": 0.50
+        },
+        "model_accuracy": {
+          "name": "模型準確率 (Model Accuracy)",
+          "beta": 1.5372,
+          "mean": 0.7497,
+          "std": 0.1424,
+          "min": 0.50,
+          "max": 1.0,
+          "step": 0.01,
+          "default": 0.75
+        },
+        "education_level": {
+          "name": "教育程度 (Education Level)",
+          "beta": 0.0844,
+          "mean": 2.1032,
+          "std": 0.9263,
+          "min": 1,
+          "max": 4,
+          "step": 1,
+          "default": 2
+        },
+        "prior_ai_exposure": {
+          "name": "過往 AI 接觸度 (Prior AI Exposure)",
+          "beta": 0.0821,
+          "mean": 1.8046,
+          "std": 0.7421,
+          "min": 1,
+          "max": 3,
+          "step": 1,
+          "default": 2
+        },
+        "domain": {
+          "name": "應用領域類別 (Domain Category)",
+          "beta": 0.1238,
+          "mean": 2.9353,
+          "std": 1.4622,
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 3
+        },
+        "override_frequency": {
+          "name": "手動覆核頻率 (Override Frequency)",
+          "beta": 0.1191,
+          "mean": 9.5131,
+          "std": 5.7454,
+          "min": 0,
+          "max": 19,
+          "step": 1,
+          "default": 9
+        },
+        "technical_experience": {
+          "name": "技術資歷年數 (Technical Experience)",
+          "beta": -0.0622,
+          "mean": 10.0482,
+          "std": 5.9937,
+          "min": 0.0,
+          "max": 20.0,
+          "step": 0.5,
+          "default": 10.0
+        },
+        "error_rate": {
+          "name": "推論錯誤率 (Error Rate)",
+          "beta": -1.3505,
+          "mean": 0.2500,
+          "std": 0.1439,
+          "min": 0.0,
+          "max": 0.55,
+          "step": 0.01,
+          "default": 0.25
+        },
+        "cognitive_load": {
+          "name": "認知負荷 (Cognitive Load)",
+          "beta": -1.4625,
+          "mean": 0.4924,
+          "std": 0.2833,
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01,
+          "default": 0.50
+        },
+        "bias_level": {
+          "name": "偏誤不公程度 (Bias Level)",
+          "beta": -2.8869,
+          "mean": 0.5030,
+          "std": 0.2832,
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01,
+          "default": 0.50
+        },
+        "ui_complexity": {
+          "name": "介面複雜繁瑣度 (UI Complexity)",
+          "beta": -3.4055,
+          "mean": 1.9116,
+          "std": 0.6911,
+          "min": 1,
+          "max": 3,
+          "step": 1,
+          "default": 2
+        }
+      },
+      "presets": {
+        "median": {
+          "label": "中位常規配置",
+          "values": {
+            "trust_history": 0.50,
+            "feedback_quality": 0.50,
+            "model_accuracy": 0.75,
+            "education_level": 2,
+            "prior_ai_exposure": 2,
+            "domain": 3,
+            "override_frequency": 9,
+            "technical_experience": 10.0,
+            "error_rate": 0.25,
+            "cognitive_load": 0.50,
+            "bias_level": 0.50,
+            "ui_complexity": 2
+          }
+        },
+        "optimal": {
+          "label": "高信任協同典範",
+          "values": {
+            "trust_history": 0.98,
+            "feedback_quality": 0.95,
+            "model_accuracy": 0.99,
+            "education_level": 3,
+            "prior_ai_exposure": 3,
+            "domain": 4,
+            "override_frequency": 2,
+            "technical_experience": 12.0,
+            "error_rate": 0.01,
+            "cognitive_load": 0.15,
+            "bias_level": 0.02,
+            "ui_complexity": 1
+          }
+        },
+        "crisis": {
+          "label": "危機失信情境",
+          "values": {
+            "trust_history": 0.15,
+            "feedback_quality": 0.20,
+            "model_accuracy": 0.55,
+            "education_level": 1,
+            "prior_ai_exposure": 1,
+            "domain": 1,
+            "override_frequency": 18,
+            "technical_experience": 18.0,
+            "error_rate": 0.48,
+            "cognitive_load": 0.95,
+            "bias_level": 0.90,
+            "ui_complexity": 3
+          }
+        }
+      },
+      "tiers": {
+        "tier1": { "min": 85, "title": "Tier 1: 全自動化信任放行 (Full Autonomy)", "color": "#10b981", "desc": "高信賴區間穩定超過 85 分。系統自動放行 AI 建議，降低人為延遲。" },
+        "tier2": { "min": 60, "title": "Tier 2: 人機雙審協同核可 (Collaborative Review)", "color": "#3b82f6", "desc": "中度信任區間 (60~84分)。AI 決策需具備關鍵步驟解釋，關鍵標籤由人類複查。" },
+        "tier3": { "min": 0, "title": "Tier 3: 嚴密人工把關與降級 (Manual Override Fallback)", "color": "#ef4444", "desc": "信任度不足 (<60分)。系統應暫停自動化推論，改為完全人工審查以防止意外偏誤。" }
+      }
+    },
+    "flood_prediction": {
+      "id": "flood_prediction",
+      "name": "Predict the Flood 洪澇災害風險預測",
+      "kaggle_name": "Kaggle Playground Series s4e5: Flood Prediction",
+      "kaggle_url": "https://www.kaggle.com/competitions/playground-series-s4e5",
+      "dataset_file": "flood_prediction.csv",
+      "target_col": "FloodProbability",
+      "target_name": "洪澇發生機率 (FloodProbability)",
+      "target_unit": "% (0.00% ~ 100.0%)",
+      "raw_samples": 10000,
+      "n_samples": 10000,
+      "total_features": 20,
+      "selected_features_count": 12,
+      "r2": 0.8449,
+      "adj_r2": 0.8446,
+      "rmse": 0.0203,
+      "mae": 0.0162,
+      "f_stat": 3782.50,
+      "f_pvalue": 0.0,
+      "intercept": 0.5042,
+      "primary_driver": "MonsoonIntensity",
+      "primary_driver_name": "季風降雨強度 (Monsoon Intensity)",
+      "features": {
+        "MonsoonIntensity": {
+          "name": "季風降雨強度 (Monsoon Intensity)",
+          "beta": 0.0125,
+          "mean": 4.95,
+          "std": 2.08,
+          "min": 0,
+          "max": 16,
+          "step": 1,
+          "default": 5
+        },
+        "DeterioratingInfrastructure": {
+          "name": "防洪設施老化率 (Infrastructure Aging)",
+          "beta": 0.0121,
+          "mean": 4.93,
+          "std": 2.06,
+          "min": 0,
+          "max": 17,
+          "step": 1,
+          "default": 5
+        },
+        "Deforestation": {
+          "name": "森林砍伐地表裸露 (Deforestation)",
+          "beta": 0.0118,
+          "mean": 4.95,
+          "std": 2.05,
+          "min": 0,
+          "max": 17,
+          "step": 1,
+          "default": 5
+        },
+        "RiverManagement": {
+          "name": "河道疏濬整治效能 (River Management)",
+          "beta": -0.0115,
+          "mean": 4.96,
+          "std": 2.07,
+          "min": 0,
+          "max": 16,
+          "step": 1,
+          "default": 5
+        },
+        "TopographyDrainage": {
+          "name": "地形自流排水優勢 (Topography Drainage)",
+          "beta": -0.0113,
+          "mean": 4.93,
+          "std": 2.09,
+          "min": 0,
+          "max": 18,
+          "step": 1,
+          "default": 5
+        },
+        "ClimateChange": {
+          "name": "氣候變遷極端衝擊 (Climate Change)",
+          "beta": 0.0111,
+          "mean": 4.93,
+          "std": 2.06,
+          "min": 0,
+          "max": 17,
+          "step": 1,
+          "default": 5
+        },
+        "DrainageSystems": {
+          "name": "雨水下水道管網效能 (Drainage Systems)",
+          "beta": -0.0108,
+          "mean": 4.95,
+          "std": 2.07,
+          "min": 0,
+          "max": 17,
+          "step": 1,
+          "default": 5
+        },
+        "Urbanization": {
+          "name": "都市不透水鋪面比率 (Urbanization)",
+          "beta": 0.0106,
+          "mean": 4.94,
+          "std": 2.08,
+          "min": 0,
+          "max": 17,
+          "step": 1,
+          "default": 5
+        },
+        "Siltation": {
+          "name": "河道泥沙淤積率 (Siltation)",
+          "beta": 0.0103,
+          "mean": 4.93,
+          "std": 2.07,
+          "min": 0,
+          "max": 16,
+          "step": 1,
+          "default": 5
+        },
+        "IneffectiveDisasterPreparedness": {
+          "name": "防救災整備缺失度 (Ineffective Preparedness)",
+          "beta": 0.0101,
+          "mean": 4.95,
+          "std": 2.08,
+          "min": 0,
+          "max": 16,
+          "step": 1,
+          "default": 5
+        },
+        "WetlandLoss": {
+          "name": "天然濕地蓄洪流失率 (Wetland Loss)",
+          "beta": 0.0097,
+          "mean": 4.95,
+          "std": 2.07,
+          "min": 0,
+          "max": 19,
+          "step": 1,
+          "default": 5
+        },
+        "DamsQuality": {
+          "name": "水庫水壩蓄洪品質 (Dams Quality)",
+          "beta": -0.0094,
+          "mean": 4.96,
+          "std": 2.08,
+          "min": 0,
+          "max": 16,
+          "step": 1,
+          "default": 5
+        }
+      },
+      "presets": {
+        "median": {
+          "label": "全區常態平穩水情",
+          "values": {
+            "MonsoonIntensity": 5,
+            "DeterioratingInfrastructure": 5,
+            "Deforestation": 5,
+            "RiverManagement": 5,
+            "TopographyDrainage": 5,
+            "ClimateChange": 5,
+            "DrainageSystems": 5,
+            "Urbanization": 5,
+            "Siltation": 5,
+            "IneffectiveDisasterPreparedness": 5,
+            "WetlandLoss": 5,
+            "DamsQuality": 5
+          }
+        },
+        "typhoon": {
+          "label": "強颱暴雨極端洪澇危機",
+          "values": {
+            "MonsoonIntensity": 14,
+            "DeterioratingInfrastructure": 12,
+            "Deforestation": 13,
+            "RiverManagement": 2,
+            "TopographyDrainage": 2,
+            "ClimateChange": 13,
+            "DrainageSystems": 2,
+            "Urbanization": 12,
+            "Siltation": 13,
+            "IneffectiveDisasterPreparedness": 12,
+            "WetlandLoss": 14,
+            "DamsQuality": 2
+          }
+        },
+        "resilient": {
+          "label": "智慧韌性防洪模範流域",
+          "values": {
+            "MonsoonIntensity": 4,
+            "DeterioratingInfrastructure": 2,
+            "Deforestation": 1,
+            "RiverManagement": 14,
+            "TopographyDrainage": 14,
+            "ClimateChange": 4,
+            "DrainageSystems": 14,
+            "Urbanization": 3,
+            "Siltation": 2,
+            "IneffectiveDisasterPreparedness": 1,
+            "WetlandLoss": 2,
+            "DamsQuality": 14
+          }
+        }
+      },
+      "tiers": {
+        "tier1": { "min": 0.65, "title": "Tier 1: 紅色特大洪澇警報 (Severe Flood Threat)", "color": "#ef4444", "desc": "預測洪澇發生機率高於 65.0%。應全面啟動防汛緊急應變，疏散低窪人口並啟動分洪滯洪池。" },
+        "tier2": { "min": 0.45, "title": "Tier 2: 黃色戒備巡檢 (Moderate Alert)", "color": "#f59e0b", "desc": "預測機率介於 45.0% ~ 64.9%。加強水門抽水機巡檢、預先排空雨水下水道蓄存容量。" },
+        "tier3": { "min": 0.0, "title": "Tier 3: 綠色安全常規監控 (Low Risk / Safe)", "color": "#10b981", "desc": "預測機率低於 45.0%。水文與排水系統運作穩定，維持常規監控與水庫調節發電。" }
+      }
+    }
+  }
+}

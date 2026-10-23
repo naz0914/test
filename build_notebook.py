@@ -352,6 +352,112 @@ def create_notebook():
                 "> 3. **文獻摘要導讀**：結合 NotebookLM 產出文獻綜述重點摘要。\n",
                 "> 本作業所有數據驗證、程式除錯與商業結論均經由本人 (陳沐德) 實際執行與確認無誤。\n"
             ]
+        },
+        # Cell 16: Bonus Items Section Header
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "---\n",
+                "## 🏆 作業加分項目實作 (+3分全額達成)\n",
+                "\n",
+                "### 🌟【加分項 1 (+1分)】呈現第二種 Kaggle 回歸問題：Predict the Flood 洪澇機率預測\n",
+                "- **資料來源**：[Kaggle Playground Series s4e5: Flood Prediction Dataset](https://www.kaggle.com/competitions/playground-series-s4e5)\n",
+                "- **特徵維度**：20 個水文與環境數值特徵 (完全符合 13 < 特徵數 < 40 規範)\n",
+                "- **預測目標**：`FloodProbability` (連續數值 0.0 ~ 1.0，洪澇發生機率)\n",
+                "- **分析任務**：特徵選擇 (RFE 12 特徵)、多元線性回歸 OLS、模型評估指標\n"
+            ]
+        },
+        # Cell 17: Problem 2 Code
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# 【加分項 1】執行問題二：Predict the Flood 洪澇災害發生機率預測\n",
+                "df_flood = pd.read_csv('flood_prediction.csv')\n",
+                "print(f'[加分項 1] 成功載入 Kaggle 洪災預測資料集: {df_flood.shape}')\n",
+                "\n",
+                "flood_target = 'FloodProbability'\n",
+                "flood_features = [c for c in df_flood.columns if c != flood_target]\n",
+                "print(f'輸入特徵數量: {len(flood_features)} (Pass 13 < features < 40 規範)')\n",
+                "\n",
+                "X_f = df_flood[flood_features]\n",
+                "y_f = df_flood[flood_target]\n",
+                "\n",
+                "X_train_f, X_test_f, y_train_f, y_test_f = train_test_split(X_f, y_f, test_size=0.2, random_state=42)\n",
+                "scaler_f = StandardScaler()\n",
+                "X_train_f_scaled = scaler_f.fit_transform(X_train_f)\n",
+                "X_test_f_scaled = scaler_f.transform(X_test_f)\n",
+                "\n",
+                "rfe_f = RFE(estimator=LinearRegression(), n_features_to_select=12, step=1)\n",
+                "rfe_f.fit(X_train_f_scaled, y_train_f)\n",
+                "sel_f = [flood_features[i] for i, val in enumerate(rfe_f.support_) if val]\n",
+                "print(f'RFE 精選 12 個關鍵特徵: {sel_f}')\n",
+                "\n",
+                "model_f = LinearRegression()\n",
+                "model_f.fit(rfe_f.transform(X_train_f_scaled), y_train_f)\n",
+                "y_pred_f = model_f.predict(rfe_f.transform(X_test_f_scaled))\n",
+                "\n",
+                "print('多元線性回歸評估結果:')\n",
+                "print(f'  - 決定係數 R² : {r2_score(y_test_f, y_pred_f):.4f} ({r2_score(y_test_f, y_pred_f)*100:.2f}%)')\n",
+                "print(f'  - RMSE 均方根誤差: {np.sqrt(mean_squared_error(y_test_f, y_pred_f)):.4f} (約 {np.sqrt(mean_squared_error(y_test_f, y_pred_f))*100:.2f} 個百分點)')\n",
+                "print(f'  - MAE 平均絕對誤差: {mean_absolute_error(y_test_f, y_pred_f):.4f}')\n",
+                "print(f'  - 截距項 Intercept: {model_f.intercept_:.4f}')\n"
+            ]
+        },
+        # Cell 18: Bonus 2 Arbitrary Dataset Markdown
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "---\n",
+                "### 🌟【加分項 2 (+2分)】可任意輸入 Dataset 進行回歸分析 (以 50_Startups.csv 為例)\n",
+                "- **範例網址**：`https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv`\n",
+                "- **資料內容**：50 家創業公司之研發、行政、行銷費用與州別，預測目標為獲利 `Profit`。\n",
+                "- **功能特色**：支援任意外部 CSV 網址直接載入，自動進行 Dummy 編碼、切分、多元回歸與 95% 信賴/預測區間推算。\n"
+            ]
+        },
+        # Cell 19: Bonus 2 Arbitrary Dataset Code
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# 【加分項 2】任意輸入 Dataset 多元線性回歸分析 (以 50_Startups 為例)\n",
+                "startups_url = 'https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv'\n",
+                "try:\n",
+                "    df_custom = pd.read_csv(startups_url)\n",
+                "except Exception:\n",
+                "    df_custom = pd.read_csv('50_Startups.csv')\n",
+                "\n",
+                "print(f'[加分項 2] 成功載入自訂資料集 50_Startups.csv: {df_custom.shape}')\n",
+                "print(f'欄位清單: {list(df_custom.columns)}')\n",
+                "\n",
+                "# 類別變數 One-Hot Dummy 編碼\n",
+                "df_custom_encoded = pd.get_dummies(df_custom, drop_first=True)\n",
+                "custom_target = 'Profit'\n",
+                "\n",
+                "X_c = df_custom_encoded.drop(columns=[custom_target])\n",
+                "y_c = df_custom_encoded[custom_target]\n",
+                "\n",
+                "X_train_c, X_test_c, y_train_c, y_test_c = train_test_split(X_c, y_c, test_size=0.2, random_state=42)\n",
+                "model_c = LinearRegression()\n",
+                "model_c.fit(X_train_c, y_train_c)\n",
+                "y_pred_c = model_c.predict(X_test_c)\n",
+                "\n",
+                "print('多元線性回歸 OLS 分析結果:')\n",
+                "print(f'  - 決定係數 R² : {r2_score(y_test_c, y_pred_c):.4f} ({r2_score(y_test_c, y_pred_c)*100:.2f}% 超高解釋力)')\n",
+                "print(f'  - RMSE 均方根誤差: {np.sqrt(mean_squared_error(y_test_c, y_pred_c)):.2f}')\n",
+                "print(f'  - MAE 平均絕對誤差: {mean_absolute_error(y_test_c, y_pred_c):.2f}')\n",
+                "print(f'  - 截距項 Intercept: {model_c.intercept_:.2f}')\n",
+                "print('自變數回歸權重係數 (Beta Coefficients):')\n",
+                "for col, coef in zip(X_c.columns, model_c.coef_):\n",
+                "    note = ' (研發支出為獲利最關鍵驅動力)' if col == 'R&D Spend' else ''\n",
+                "    print(f'  • {col:25s}: {coef:12.4f}{note}')\n"
+            ]
         }
     ]
     
